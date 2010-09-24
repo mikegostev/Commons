@@ -7,28 +7,33 @@ import java.util.Iterator;
 
 public class CollectionsUnion<E> implements Collection<E>, Serializable
 {
- private Collection<Collection<E>> collecs;
+ private static final long serialVersionUID = 1750397661035015383L;
+ 
+ private Collection<? extends Collection<E>> collecs;
  private int size=0;
  
  public CollectionsUnion( Collection<E> ... cs )
  {
-  collecs = new ArrayList<Collection<E>>( cs.length );
+  Collection<Collection<E>> col = new ArrayList<Collection<E>>( cs.length );
   
   for( Collection<E> c : cs )
   {
-   collecs.add(c);
+   col.add(c);
    size+=c.size();
   }
+  
+  collecs=col;
  }
  
- public CollectionsUnion( Collection<Collection<E>> cs )
+ public CollectionsUnion( Collection<? extends Collection<E>> cs )
  {
   collecs=cs;
   
   for( Collection<E> c : collecs )
    size += c.size();
  }
- 
+
+
  
  @Override
  public boolean add(E e)
@@ -78,7 +83,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   
   return new Iterator<E>(){
    
-   Iterator<Collection<E>> citer = collecs.iterator();
+   Iterator<? extends Collection<E>> citer = collecs.iterator();
    Iterator<E> eiter=citer.next().iterator();
    
    
