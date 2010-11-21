@@ -7,6 +7,7 @@
 package com.pri.session;
 
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +21,6 @@ import com.pri.log.Log;
 import com.pri.log.Logger;
 import com.pri.util.CalendarUtils;
 import com.pri.util.Interval;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author mg
@@ -301,7 +301,7 @@ public class SessionPoolLocalMap<CS extends ClientSession> implements SessionPoo
    }
   }
   
-  public void destroy()
+  public void terminate()
   {
    alive=false;
    interrupt();
@@ -348,7 +348,7 @@ public class SessionPoolLocalMap<CS extends ClientSession> implements SessionPoo
    rwLock.writeLock().unlock();
   }
 
-  cleaner.destroy();
+  cleaner.terminate();
  }
  
  public CS getSession(int userID)
