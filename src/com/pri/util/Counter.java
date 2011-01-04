@@ -15,6 +15,8 @@ package com.pri.util;
  */
 public class Counter extends Number
 {
+ private static final long serialVersionUID = 698465133888087160L;
+
  private int count;
  /**
   * 

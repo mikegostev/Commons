@@ -1,6 +1,8 @@
 package com.pri.util;
 
-public class Pair<First, Second>
+import java.io.Serializable;
+
+public class Pair<First, Second> implements Serializable
 {
  private First first;
  private Second second;
@@ -35,4 +37,8 @@ public class Pair<First, Second>
   this.second = second;
  }
  
+ public String toString()
+ {
+  return first.toString() + " => "+second.toString();
+ }
 }
