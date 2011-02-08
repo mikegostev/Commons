@@ -99,6 +99,59 @@ public class StringUtils
  private StringUtils()
  {}
 
+ public static int naturalCompare(String str1, String str2)
+ {
+  int l1 = str1.length();
+  int l2 = str2.length();
+  
+  int ml = l1<l2?l1:l2;
+  
+  int v1=0, v2=0;
+
+  int i=0;
+  
+  for( ; i < ml && str1.charAt(i) == str2.charAt(i) && ( ! Character.isDigit(str1.charAt(i)) ) && ( ! Character.isDigit(str2.charAt(i)) ) ; i++ );
+
+  int j=i;
+  for( ; j < l1 && Character.isDigit(str1.charAt(j)); j++ )
+   v1 = v1*10+(str1.charAt(j)-'0');
+
+  int k=i;
+  for( ; k < l2 && Character.isDigit(str2.charAt(k)); k++ )
+   v2 = v2*10+(str2.charAt(k)-'0');
+  
+  if( v1==0 && v2==0 )
+  {
+   if( i < l1 )
+   {
+    if( i < l2 )
+     return str1.charAt(i)-str2.charAt(i);
+    else
+     return 1;
+   }
+   else if( i == l2 )
+    return l1-l2;
+   else
+    return -1;
+  }
+  else if( v1 == v2 )
+  {
+   if( j < l1 )
+   {
+    if( k < l2 )
+     return naturalCompare(str1.substring(j), str2.substring(k) );
+    else
+     return 1;
+   }
+   else if( k < l2 )
+    return -1;
+   else
+    return l1-l2;
+  }
+  else
+   return v1-v2;
+ }
+ 
  public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch )
  {
   int cPos,ePos;
