@@ -19,8 +19,7 @@ public class FileDepot
    if( ! rt.canWrite() )
     throw new IOException("Root directory is not writable");
   }
-  
-  if( !  rt.mkdirs() )
+  else if( !  rt.mkdirs() )
    throw new IOException("Can't create root directory: "+rt.getAbsolutePath());
   
   rootDir = rt;
