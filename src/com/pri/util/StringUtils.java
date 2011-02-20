@@ -152,7 +152,16 @@ public class StringUtils
    return v1-v2;
  }
  
+ /**
+  * Adds backslashes before every char ch
+  * 
+ */
  public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch )
+ {
+  return appendEscaped( sb, str, ch, '\\');
+ }
+
+ public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch, char escChar )
  {
   int cPos,ePos;
   
@@ -172,7 +181,7 @@ public class StringUtils
    }
    
    sb.append(str.substring(cPos,ePos));
-   sb.append('\\');
+   sb.append(escChar);
    sb.append(ch);
    
    cPos=ePos+1;
@@ -180,8 +189,16 @@ public class StringUtils
  
   return sb;
  }
-
+ /**
+  * Adds backslashes before every char ch
+  * 
+ */
  public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch )
+ {
+  return appendEscaped( sb, str, ch, '\\');
+ }
+
+ public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escChar )
  {
   int cPos,ePos;
 
@@ -201,7 +218,7 @@ public class StringUtils
    }
    
    sb.append(str.substring(cPos,ePos));
-   sb.append('\\');
+   sb.append(escChar);
    sb.append(ch);
    
    cPos=ePos+1;
