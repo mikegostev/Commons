@@ -8,7 +8,6 @@ package com.pri.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 
@@ -21,77 +20,98 @@ import java.util.List;
  */
 public class StringUtils
 {
- private static class CharPair implements Comparable<CharPair>
+ public static class ReplacePair implements Comparable<ReplacePair>
  {
-  char first;
-  char second;
+  char subject;
+  String replacement;
   
-  public CharPair()
+  public ReplacePair()
   {}
   
-  public CharPair(char first, char second)
+  public ReplacePair(char first, String second)
   {
-   this.first = first;
-   this.second = second;
+   this.subject = first;
+   this.replacement = second;
   }
   
-  public char getFirst()
+  public char getSubject()
   {
-   return first;
+   return subject;
   }
   
-  public void setFirst(char first)
+  public void setSubject(char first)
   {
-   this.first = first;
+   this.subject = first;
   }
   
-  public char getSecond()
+  public String getReplacement()
   {
-   return second;
+   return replacement;
   }
 
-  public void setSecond(char second)
+  public void setReplacement(String second)
   {
-   this.second = second;
+   this.replacement = second;
   }
 
-  public int compareTo(CharPair toCmp)
+  public int compareTo(ReplacePair toCmp)
   {
-   return first-toCmp.first;
+   return subject-toCmp.getSubject();
   }
   
   public boolean equals( Object o )
   {
-   return first==((CharPair)o).first;
+   return subject==((ReplacePair)o).getSubject();
   }
   
  }
+
  
- static final char[] htmlEscChars = new char[]{  '"',     '\'',   '<',   '>',   '&'};
- static final String[] htmlEntity = new String[]{"&quot;","&#39;","&lt;","&gt;","&amp;"};
- static final char[] escChars = {'\'','"','\\','\0'};
+// static final char[] htmlEscChars = new char[]{  '"',     '\'',   '<',   '>',   '&'};
+// static final String[] htmlEntity = new String[]{"&quot;","&#39;","&lt;","&gt;","&amp;"};
+// static final char[] escChars = {'\'','"','\\','\0'};
  
- static final char[][] escPairsO = {{'\'','\''},{'"','"'},{'\\','\\'},{'\0','0'},{'\n','n'},{'\r','r'}};
- static final CharPair[] escPairs = { 
-  new CharPair('\'','\''),
-  new CharPair('"','"'),
-  new CharPair('\\','\\'),
-  new CharPair('\0','0'),
-  new CharPair('\n','n'),
-  new CharPair('\r','r')
+// static final char[][] escPairsO = {{'\'','\''},{'"','"'},{'\\','\\'},{'\0','0'},{'\n','n'},{'\r','r'}};
+ 
+ static final ReplacePair[] htmlPairs = { 
+  new ReplacePair('"',"&quot;"),
+  new ReplacePair('\'',"&#39;"),
+  new ReplacePair('<',"&lt;"),
+  new ReplacePair('>',"&gt;"),
+  new ReplacePair('&',"&amp;"),
   };
+
+ static final ReplacePair[] cStrPairs = { 
+  new ReplacePair('\'',"\\'"),
+  new ReplacePair('"',"\\\""),
+  new ReplacePair('\\',"\\\\"),
+  new ReplacePair('\0',"\\0"),
+  new ReplacePair('\n',"\\n"),
+  new ReplacePair('\r',"\\r")
+  };
+
  
- static final Comparator<char[]> pairComp = new Comparator<char[]>()
- {
-  public int compare(char[] arg0, char[] arg1)
-  {
-   return arg0[0]-arg1[0];
-  }
- };
+// static final CharPair[] escPairs = { 
+//  new CharPair('\'','\''),
+//  new CharPair('"','"'),
+//  new CharPair('\\','\\'),
+//  new CharPair('\0','0'),
+//  new CharPair('\n','n'),
+//  new CharPair('\r','r')
+//  };
+ 
+// static final Comparator<char[]> pairComp = new Comparator<char[]>()
+// {
+//  public int compare(char[] arg0, char[] arg1)
+//  {
+//   return arg0[0]-arg1[0];
+//  }
+// };
 
  static
  {
-  Arrays.sort( escPairs );
+  Arrays.sort( htmlPairs );
+  Arrays.sort( cStrPairs );
  }
  /**
   * 
@@ -152,11 +172,109 @@ public class StringUtils
    return v1-v2;
  }
  
+ public static String replace( String str, ReplacePair[] pairs )
+ {
+  StringBuffer sb=null;
+  int cPos,ePos,mPos;
+ 
+  ReplacePair actPair = null;
+  
+  cPos=0;
+  while( cPos < str.length() )
+  {
+   
+   ePos = Integer.MAX_VALUE;
+   for( int i=0; i < pairs.length; i++ )
+   {
+    mPos=str.indexOf(pairs[i].getSubject(),cPos);
+    
+    if( mPos == -1 )
+     continue;
+    
+    if( mPos < ePos )
+    {
+     ePos=mPos;
+     actPair=pairs[i];
+    }
+   }
+   
+   if( ePos == Integer.MAX_VALUE )
+   {
+    if( sb == null )
+     return str;
+
+    sb.append(str.substring(cPos));
+    return sb.toString();
+   }
+   
+   if( sb == null )
+    sb=new StringBuffer(str.length()*2);
+    
+   sb.append(str.substring(cPos,ePos));
+   sb.append(actPair.getReplacement());
+   
+   cPos=ePos+1;
+  }
+ 
+  if( sb != null )
+   return sb.toString();
+  
+  return str;
+ }
+
+ 
+ public static StringBuilder appendReplaced( StringBuilder sb, String str, ReplacePair[] pairs )
+ {
+   int len=0;
+   if( str == null || ( len=str.length()) == 0 )
+    return sb;
+   
+   ReplacePair pair = new ReplacePair();
+   
+   for( int i=0; i < len; i++ )
+   {
+    char ch = str.charAt(i);
+    pair.setSubject(ch);
+    
+    int ind = Arrays.binarySearch( pairs, pair );
+    if( ind >= 0 )
+     sb.append(pairs[ind].getReplacement());
+    else
+     sb.append(ch);
+   }
+   
+  return sb;
+ }
+ 
+ public static StringBuffer appendReplaced( StringBuffer sb, String str, ReplacePair[] pairs )
+ {
+   int len=0;
+   if( str == null || ( len=str.length()) == 0 )
+    return sb;
+   
+   ReplacePair pair = new ReplacePair();
+   
+   for( int i=0; i < len; i++ )
+   {
+    char ch = str.charAt(i);
+    pair.setSubject(ch);
+    
+    int ind = Arrays.binarySearch( pairs, pair );
+    if( ind >= 0 )
+     sb.append(pairs[ind].getReplacement());
+    else
+     sb.append(ch);
+   }
+   
+  return sb;
+ }
+
+ 
  /**
   * Adds backslashes before every char ch
   * 
  */
- public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch )
+ public static StringBuilder appendBackslashed( StringBuilder sb, String str, char ch )
  {
   return appendEscaped( sb, str, ch, '\\');
  }
@@ -227,11 +345,105 @@ public class StringUtils
   return sb;
  }
 
- public static StringBuilder appendSlashed( StringBuilder sb, String str )
+ public static StringBuilder appendAsCStr( StringBuilder sb, String str )
  {
-  return escape( sb, str, escPairs );
+  return appendReplaced( sb, str, cStrPairs );
+ }
+ 
+ public static String escapeBy( String str, char ch, char escCh )
+ {
+  StringBuffer sb=null;
+  int cPos,ePos;
+  
+  cPos=0;
+  while( cPos < str.length() )
+  {
+   ePos=str.indexOf(ch,cPos);
+    
+   if( ePos == -1 )
+   {
+    if( sb == null )
+     return str;
+
+    sb.append(str.substring(cPos));
+     return sb.toString();
+
+   }
+   
+   if( sb == null )
+    sb=new StringBuffer(str.length()*2);
+    
+   sb.append(str.substring(cPos,ePos));
+   sb.append(escCh);
+   sb.append(ch);
+   
+   cPos=ePos+1;
+  }
+ 
+  if( sb != null )
+   return sb.toString();
+  
+  return str;
+ }
+ 
+ public static String escapeByBackslash( String str, char ch )
+ {
+  return escapeBy(str,ch,'\\');
  }
 
+ public static String escapeBy( String str, String escChars, char escCh )
+ {
+  StringBuffer sb=null;
+  int cPos,ePos,mPos;
+  
+  cPos=0;
+  while( cPos < str.length() )
+  {
+   ePos = Integer.MAX_VALUE;
+   for( int i=0; i < escChars.length(); i++ )
+   {
+    mPos=str.indexOf(escChars.charAt(i),cPos);
+    
+    if( mPos == -1 )
+     continue;
+    
+    if( mPos < ePos )
+     ePos=mPos;
+    
+   }
+   
+   if( ePos == Integer.MAX_VALUE )
+   {
+    if( sb == null )
+     return str;
+
+    sb.append(str.substring(cPos));
+    return sb.toString();
+   }
+   
+   if( sb == null )
+    sb=new StringBuffer(str.length()*2);
+    
+   sb.append(str.substring(cPos,ePos));
+   sb.append(escCh);
+   sb.append(str.charAt(ePos));
+   
+   cPos=ePos+1;
+  }
+ 
+  if( sb != null )
+   return sb.toString();
+  
+  return str;
+ }
+ 
+ public static String escapeByBackslash( String str, String escChars )
+ {
+  return escapeBy(str,escChars,'\\');
+ }
+
+
+/*
  public static StringBuilder appendSlashed2( StringBuilder sb, String str )
  {
   int cPos,ePos,mPos;
@@ -272,7 +484,9 @@ public class StringUtils
   
   return sb;
  }
+*/
 
+/* 
  public static StringBuilder escape( StringBuilder sb, String str, CharPair[] pairs )
  {
   int len=0;
@@ -335,7 +549,8 @@ public class StringUtils
   
   return sb==null?str:sb.toString();
  }
-
+*/
+ 
  public static String jsString( String str )
  {
   if( str == null )
@@ -344,128 +559,23 @@ public class StringUtils
   StringBuilder sb = new StringBuilder( str.length() + 10 );
   
   sb.append('\'');
-  escape(sb, str, escPairs);
+  appendAsCStr(sb, str);
   sb.append('\'');
   
   return sb.toString();
  }
  
- public static String addSlashes( String str, char ch )
- {
-  StringBuffer sb=null;
-  int cPos,ePos;
-  
-  cPos=0;
-  while( cPos < str.length() )
-  {
-   ePos=str.indexOf(ch,cPos);
-    
-   if( ePos == -1 )
-   {
-    if( sb == null )
-     return str;
 
-    sb.append(str.substring(cPos));
-     return sb.toString();
+ 
+ 
 
-   }
-   
-   if( sb == null )
-    sb=new StringBuffer(str.length()*2);
-    
-   sb.append(str.substring(cPos,ePos));
-   sb.append('\\');
-   sb.append(ch);
-   
-   cPos=ePos+1;
-  }
- 
-  if( sb != null )
-   return sb.toString();
-  
-  return str;
- }
- 
- 
- public static String addSlashes( String str, String escChars )
- {
-  StringBuffer sb=null;
-  int cPos,ePos,mPos;
-  
-  cPos=0;
-  while( cPos < str.length() )
-  {
-   ePos = Integer.MAX_VALUE;
-   for( int i=0; i < escChars.length(); i++ )
-   {
-    mPos=str.indexOf(escChars.charAt(i),cPos);
-    
-    if( mPos == -1 )
-     continue;
-    
-    if( mPos < ePos )
-     ePos=mPos;
-    
-   }
-   
-   if( ePos == Integer.MAX_VALUE )
-   {
-    if( sb == null )
-     return str;
-
-    sb.append(str.substring(cPos));
-     return sb.toString();
-   }
-   
-   if( sb == null )
-    sb=new StringBuffer(str.length()*2);
-    
-   sb.append(str.substring(cPos,ePos));
-   sb.append('\\');
-   sb.append(str.charAt(ePos));
-   
-   cPos=ePos+1;
-  }
- 
-  if( sb != null )
-   return sb.toString();
-  
-  return str;
- }
 
  public static String htmlEscaped( String s )
  {
   if( s == null )
    return "";
   
-  StringBuilder sb = null;
-  
-  int l=s.length();
-  int ne = htmlEscChars.length;
-  ext: for( int i=0; i < l; i++ )
-  {
-   char ch = s.charAt(i);
-   for( int j=0; j < ne; j++ )
-   {
-    if( htmlEscChars[j] == ch )
-    {
-     if( sb == null )
-     {
-      sb = new StringBuilder(l*2);
-      if( i > 0 )
-       sb.append( s.substring(0, i) );
-     }
-     
-     sb.append(htmlEntity[j]);
-     continue ext;
-    }
-   }
-   
-   if( sb != null )
-    sb.append(ch);
-  }
-  
-  return sb!=null?sb.toString():s;
+  return replace(s, htmlPairs);
  }
  
  public static void splitExcelString(String line, String sep, List<String> accum)

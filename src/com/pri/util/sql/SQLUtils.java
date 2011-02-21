@@ -278,7 +278,7 @@ public class SQLUtils
      else
      {
       sb.append("` REGEXP '");
-      StringUtils.appendSlashed(sb, (String)value);
+      StringUtils.appendBackslashed(sb, (String)value, '\'');
       sb.append('\'');
      }
     }
@@ -402,7 +402,7 @@ public class SQLUtils
     sb.append(f.getName());
 
     sb.append("` REGEXP '");
-    StringUtils.appendSlashed(sb, ((Pattern) value).pattern());
+    StringUtils.appendBackslashed(sb,  ((Pattern) value).pattern(), '\'');
     sb.append('\'');
    }
    else if(value instanceof IntegerPool)
@@ -470,7 +470,7 @@ public class SQLUtils
      sb.append(tbl).append("`.`");
 
     sb.append(f.getName()).append("`='");
-    StringUtils.appendSlashed(sb, value.toString()).append('\'');
+    StringUtils.appendBackslashed(sb, value.toString(),'\'').append('\'');
    }
 
   }
