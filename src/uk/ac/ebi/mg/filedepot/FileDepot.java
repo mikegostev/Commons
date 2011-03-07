@@ -24,6 +24,12 @@ public class FileDepot
   
   rootDir = rt;
  }
+
+ public File getFilePath( String fname )
+ {
+  return getFilePath(fname, -1L);
+ }
+
  
  public File getFilePath( String fname, long timestamp )
  {
@@ -48,6 +54,9 @@ public class FileDepot
   
   File dir = new File(rootDir,"xx"+dgts[0]+dgts[1]+"xx/xx"+dgts[0]+dgts[1]+dgts[2]+dgts[3]+"/");
   dir.mkdirs();
+  
+  if( timestamp == -1 )
+   return new File(dir,fname);
   
   return new File(dir,fname+'.'+timestamp);
  }
