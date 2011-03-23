@@ -8,9 +8,17 @@ import java.util.List;
 public class FileDepot
 {
  private File rootDir;
- 
+ private boolean useHash = false;
+
  public FileDepot( File rt ) throws IOException
  {
+  this(rt,false);
+ }
+ 
+ public FileDepot( File rt, boolean hsh ) throws IOException
+ {
+  useHash = hsh;
+  
   if( rt.exists() )
   {
    if( ! rt.isDirectory() )
@@ -33,32 +41,55 @@ public class FileDepot
  
  public File getFilePath( String fname, long timestamp )
  {
-  char dgts[] = new char[4];
-  int nmLen = fname.length();
+  String name = fname;
   
-  for( int i=1; i <= dgts.length; i++ )
+  char tail[] = new char[4];
+  int nmLen;
+
+  if( useHash )
+  {
+   name = Integer.toHexString(fname.hashCode() );
+   nmLen = name.length();
+  }
+  else
+  {
+   name = fname;
+
+   int extPos = fname.lastIndexOf('.');
+   
+   
+   if( extPos == -1 )
+    nmLen = fname.length();
+   else
+    nmLen = extPos;
+  }
+   
+  
+  for( int i=1; i <= tail.length; i++ )
   {
    if( i > nmLen )
-    dgts[dgts.length-i]='0';
+    tail[tail.length-i]='_';
    else
    {
-    char dg = fname.charAt( nmLen-i );
+    char dg = name.charAt( nmLen-i );
     
-    if( ! Character.isDigit(dg) )
-     dg = '0';
+//    dg = Character.toLowerCase(dg);
+//    
+//    if( ! Character.isDigit(dg) )
+//     dg = '0';
     
-    dgts[dgts.length-i]=dg;
+    tail[tail.length-i]=dg;
    }
   }
   
   
-  File dir = new File(rootDir,"xx"+dgts[0]+dgts[1]+"xx/xx"+dgts[0]+dgts[1]+dgts[2]+dgts[3]+"/");
+  File dir = new File(rootDir,"xx"+tail[0]+tail[1]+"xx/xx"+tail[0]+tail[1]+tail[2]+tail[3]+"/");
   dir.mkdirs();
   
   if( timestamp == -1 )
    return new File(dir,fname);
   
-  return new File(dir,fname+'.'+timestamp);
+  return new File(dir,fname+'@'+timestamp);
  }
  
  public List<File> listFiles()
