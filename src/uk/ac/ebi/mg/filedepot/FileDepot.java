@@ -89,7 +89,7 @@ public class FileDepot
   if( timestamp == -1 )
    return new File(dir,fname);
   
-  return new File(dir,fname+'@'+timestamp);
+  return new File(dir,timestamp+"@"+fname);
  }
  
  public List<File> listFiles()

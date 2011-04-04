@@ -5,17 +5,47 @@ public class M2codec
  private static final char escCharLo='_';
  private static final char escCharHi='-';
  
- private M2codec()
+ protected static class Profile
  {
+  char getEscCharLo()
+  {
+   return escCharLo;
+  }
+
+  char getEscCharHi()
+  {
+   return escCharHi;
+  }
+  
+  boolean isCharLegal( char ch )
+  {
+   if( ( ch >= '0' && ch <= '9' ) || ( ch >= 'a' && ch <= 'z' ) || ( ch >= 'A' && ch <= 'Z') )
+    return true;
+   
+   return false;
+  }
+
  }
  
+ protected static Profile codecProfile = new Profile();
+ 
+ 
+ protected M2codec()
+ {
+ }
+
  public static String encode( String str )
+ {
+  return _encode(str, codecProfile);
+ }
+ 
+ protected static String _encode( String str, Profile profile )
  {
   int pos = 0;
   char ch = 0;
 
   while(pos < str.length())
-   if(!isCharLegal(ch = str.charAt(pos) ) )
+   if(!profile.isCharLegal(ch = str.charAt(pos) ) )
     break;
    else
     pos++;
@@ -31,12 +61,12 @@ public class M2codec
   do
   {
    ch = str.charAt(pos);
-   if( !isCharLegal(ch) )
+   if( !profile.isCharLegal(ch) )
    {
     if( ch < 256) 
-     sb.append(escCharLo).append((char)('A' + (ch >> 4 & 0x0F))).append((char)('A' + (ch & 0x0F)));
+     sb.append(profile.getEscCharLo()).append((char)('A' + (ch >> 4 & 0x0F))).append((char)('A' + (ch & 0x0F)));
     else  
-     sb.append(escCharHi).append((char)('A' + (ch >> 12 & 0x0F))).append((char)('A' + (ch >> 8 & 0x0F)))
+     sb.append(profile.getEscCharHi()).append((char)('A' + (ch >> 12 & 0x0F))).append((char)('A' + (ch >> 8 & 0x0F)))
      .append((char)('A' + (ch >> 4 & 0x0F))).append((char)('A' + (ch & 0x0F)));
    }
    else
@@ -48,13 +78,19 @@ public class M2codec
   return sb.toString();
  }
 
- public static String decode(String str)
+ public static String decode( String str )
+ {
+  return _decode(str, codecProfile);
+ }
+
+ 
+ public static String _decode(String str, Profile profile)
  {
   if( str == null )
    return null;
   
-  int posL = str.indexOf(escCharLo);
-  int posH = str.indexOf(escCharHi);
+  int posL = str.indexOf(profile.getEscCharLo());
+  int posH = str.indexOf(profile.getEscCharHi());
 
   StringBuilder sb = new StringBuilder(str.length());
 
@@ -86,12 +122,12 @@ public class M2codec
   {
    char ch = str.charAt(pos);
 
-   if(ch == escCharLo )
+   if(ch == profile.getEscCharLo() )
    {
     sb.append((char) (((str.charAt(pos+1) - 'A') << 4) + (str.charAt(pos+2) - 'A')));
     pos+=2;
    }
-   else if(ch == escCharHi )
+   else if(ch == profile.getEscCharHi() )
    {
     sb.append((char) (((str.charAt(pos+1) - 'A') << 12) + ((str.charAt(pos+2) - 'A')<< 8)+((str.charAt(pos+3) - 'A') << 4) + (str.charAt(pos+4) - 'A')));
     pos+=4;
@@ -105,13 +141,6 @@ public class M2codec
   return sb.toString();
  }
  
- private static boolean isCharLegal( char ch )
- {
-  if( ( ch >= '0' && ch <= '9' ) || ( ch >= 'a' && ch <= 'z' ) || ( ch >= 'A' && ch <= 'Z') )
-   return true;
-  
-  return false;
- }
 
 
 }
