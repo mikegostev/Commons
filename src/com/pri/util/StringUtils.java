@@ -6,6 +6,8 @@
  */
 package com.pri.util;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -682,4 +684,29 @@ public class StringUtils
   return res;
  }
 
+ public static String hashStringSHA1 ( String pass )
+ {
+  String digestAlg = "SHA1";
+  StringBuffer passhash = null;
+  try
+  {
+   MessageDigest md = MessageDigest.getInstance(digestAlg);
+
+   byte[] digest = md.digest(pass.toString().getBytes());
+
+   passhash = new StringBuffer(40);
+   passhash.append(digestAlg).append('.');
+
+   for(int i = 0; i < digest.length; i++)
+    passhash.append(Integer.toHexString(digest[i] & 0xFF));
+
+  }
+  catch(NoSuchAlgorithmException ex)
+  {
+   throw new RuntimeException("SHA1 algorithm is not supported by your Java implementation");
+  }
+
+  return passhash.toString();
+ }
+ 
 }
