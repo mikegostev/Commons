@@ -18,6 +18,9 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   
   for( Collection<E> c : cs )
   {
+   if( c == null )
+    continue;
+   
    col.add(c);
    size+=c.size();
   }
@@ -30,7 +33,8 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   collecs=cs;
   
   for( Collection<E> c : collecs )
-   size += c.size();
+   if( c != null )
+    size += c.size();
  }
 
 
@@ -57,7 +61,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
  public boolean contains(Object o)
  {
   for( Collection<E> c : collecs )
-   if( c.contains(o) )
+   if( c != null && c.contains(o) )
     return true;
   
   return false;
@@ -84,21 +88,44 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   return new Iterator<E>(){
    
    Iterator<? extends Collection<E>> citer = collecs.iterator();
-   Iterator<E> eiter=citer.next().iterator();
+   Iterator<E> eiter=null;
    
+   {
+    while( citer.hasNext() )
+    {
+     Collection<E> c = citer.next();
+     
+     if( c != null )
+     {
+      eiter = c.iterator();
+      break;
+     }
+    }
+   }
    
    @Override
    public boolean hasNext()
    {
     while( true )
     {
-     if(eiter.hasNext())
+     if(eiter != null && eiter.hasNext())
       return true;
 
-     if(!citer.hasNext())
+     if( ! citer.hasNext() )
       return false;
      
-     eiter=citer.next().iterator();
+     eiter = null;
+     
+     while( citer.hasNext() )
+     {
+      Collection<E> c = citer.next();
+      
+      if( c != null )
+      {
+       eiter = c.iterator();
+       break;
+      }
+     }
     }
     
    }
@@ -149,8 +176,13 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   Object[] res = new Object[size];
   
   for( Collection<E> c : collecs )
+  {
+   if( c == null )
+    continue;
+   
    for( E el : c )
     res[i++]=el;
+  }
   
   return res;
  }
