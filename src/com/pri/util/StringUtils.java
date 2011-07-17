@@ -121,7 +121,87 @@ public class StringUtils
  private StringUtils()
  {}
 
+// Gives the following order (number of digits takes precedence of tail )
+// A000
+// A000B01
+// A00B01
+// A0000001A02
+// A001B01
+// A01A02
+// A01B01
+// A01B02
+// A02B01
+// A2B01
+// A11B01
+// AB02B01
+ 
  public static int naturalCompare(String str1, String str2)
+ {
+  int l1 = str1.length();
+  int l2 = str2.length();
+
+  int ml = l1 < l2 ? l1 : l2;
+
+  int v1,v2;
+
+  int i = 0;
+
+  do
+  {
+   for(; i < ml && str1.charAt(i) == str2.charAt(i) && (!Character.isDigit(str1.charAt(i))) && (!Character.isDigit(str2.charAt(i))); i++)
+    ;
+
+   if(i == ml)
+    break;
+
+   if( Character.isDigit(str1.charAt(i)) )
+    v1=str1.charAt(i) - '0';
+   else
+    return str1.charAt(i) - str2.charAt(i);
+   
+   if( Character.isDigit(str2.charAt(i)) )
+    v2 = str2.charAt(i) - '0';
+   else
+    return str1.charAt(i) - str2.charAt(i);
+
+   i++;
+
+   int j = i;
+   for(; j < l1 && Character.isDigit(str1.charAt(j)); j++)
+    v1 = v1 * 10 + (str1.charAt(j) - '0');
+
+   int k = i;
+   for(; k < l2 && Character.isDigit(str2.charAt(k)); k++)
+    v2 = v2 * 10 + (str2.charAt(k) - '0');
+
+   if(v1 != v2)
+    return v1 - v2;
+
+   if(j != k)
+    return k - j;
+
+   i = j;
+  }
+  while(i < ml);
+ 
+  return l1-l2;
+ }
+
+//Gives the following order (tail takes precedence of number of digits )
+// A000
+// A00B01
+// A000B01
+// A01A02
+// A0000001A02
+// A01B01
+// A001B01
+// A01B02
+// A2B01
+// A02B01
+// A11B01
+// AB02B01
+
+ public static int naturalCompare2(String str1, String str2) // Wrong algorithms gives Equals: A01B01 and A001B01
  {
   int l1 = str1.length();
   int l2 = str2.length();
@@ -142,7 +222,7 @@ public class StringUtils
   for( ; k < l2 && Character.isDigit(str2.charAt(k)); k++ )
    v2 = v2*10+(str2.charAt(k)-'0');
   
-  if( v1==0 && v2==0 )
+  if( i==j || i==k )
   {
    if( i < l1 )
    {
@@ -161,7 +241,17 @@ public class StringUtils
    if( j < l1 )
    {
     if( k < l2 )
-     return naturalCompare(str1.substring(j), str2.substring(k) );
+    {
+     if( j == k )
+      return naturalCompare2(str1.substring(j), str2.substring(k) );
+     
+     int res = naturalCompare2(str1.substring(j), str2.substring(k) );
+     
+     if( res == 0 )
+      return j-k;
+     
+     return res;
+    }
     else
      return 1;
    }

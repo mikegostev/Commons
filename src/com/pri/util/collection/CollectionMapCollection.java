@@ -58,7 +58,7 @@ public class CollectionMapCollection<E> implements Collection<E>
  public Iterator<E> iterator()
  {
   if( size() == 0 )
-   return new EmptyIterator<E>();
+   return EmptyIterator.getInstance();
   
   return new Iterator<E>(){
    

@@ -96,7 +96,7 @@ public class TransferUnit
  public Iterator<Map.Entry<String, String>> iterator()
  {
   if( properties == null )
-   return new EmptyIterator<Map.Entry<String, String>>();
+   return  EmptyIterator.<Map.Entry<String, String>>getInstance();
   
   return properties.entrySet().iterator();
  }

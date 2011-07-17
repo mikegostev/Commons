@@ -83,7 +83,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
  public Iterator<E> iterator()
  {
   if( size == 0 )
-   return new EmptyIterator<E>();
+   return EmptyIterator.getInstance();
   
   return new Iterator<E>(){
    
