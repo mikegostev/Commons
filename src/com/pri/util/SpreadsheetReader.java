@@ -60,7 +60,24 @@ public class SpreadsheetReader
   return lpos;
  }
  
- public List<String> readLine( List<String> accum )
+ public List<String> readRow( List<String> accum )
+ {
+  String line = readLine();
+  
+  if( line == null )
+   return null;
+  
+  if( accum == null )
+   accum = new ArrayList<String>(50);
+  else
+   accum.clear();
+
+  StringUtils.splitExcelString(line, columnSep, accum);
+ 
+  return accum;
+ }
+ 
+ public String readLine( )
  {
   if( cpos >= textLen )
    return null;
@@ -69,11 +86,7 @@ public class SpreadsheetReader
   
   ln++;
 
-  if( accum == null )
-   accum = new ArrayList<String>(50);
-  else
-   accum.clear();
-  
+ 
   int pos = text.indexOf('\n', cpos);
 
   String line = null;
@@ -94,8 +107,7 @@ public class SpreadsheetReader
    line=text.substring(tpos,pos);
   }
 
-  StringUtils.splitExcelString(line, columnSep, accum);
- 
-  return accum;
+  return line;
  }
+
 }
