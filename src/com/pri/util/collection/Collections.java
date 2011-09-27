@@ -183,7 +183,7 @@ public class Collections
 
  }
 
- private static class EmptyMap implements Map<Object, Object>
+ private static class EmptyMap implements Map<Object, Object>, Serializable
  {
 
   @Override

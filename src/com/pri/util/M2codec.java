@@ -39,13 +39,18 @@ public class M2codec
   return _encode(str, codecProfile);
  }
  
+ public final static boolean isCharLegal( char ch, Profile profile )
+ {
+  return profile.isCharLegal( ch ) && ch != escCharHi && ch != escCharLo;
+ }
+ 
  protected static String _encode( String str, Profile profile )
  {
   int pos = 0;
   char ch = 0;
 
   while(pos < str.length())
-   if(!profile.isCharLegal(ch = str.charAt(pos) ) )
+   if( ! isCharLegal(ch = str.charAt(pos) , profile ) )
     break;
    else
     pos++;
@@ -61,7 +66,7 @@ public class M2codec
   do
   {
    ch = str.charAt(pos);
-   if( !profile.isCharLegal(ch) )
+   if( !isCharLegal(ch,profile) )
    {
     if( ch < 256) 
      sb.append(profile.getEscCharLo()).append((char)('A' + (ch >> 4 & 0x0F))).append((char)('A' + (ch & 0x0F)));
@@ -92,6 +97,9 @@ public class M2codec
   int posL = str.indexOf(profile.getEscCharLo());
   int posH = str.indexOf(profile.getEscCharHi());
 
+  if( posL == -1 && posH == -1 )
+   return str;
+  
   StringBuilder sb = new StringBuilder(str.length());
 
   int pos=-1;
