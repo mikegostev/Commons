@@ -3,9 +3,10 @@ package uk.ac.ebi.mg.filedepot;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class FileDepot
+public class FileDepot implements Iterable<File>
 {
  private File rootDir;
  private boolean useHash = false;
@@ -104,6 +105,112 @@ public class FileDepot
   return list;
  }
 
+ public Iterator<File> iterator()
+ {
+  return new Iterator<File>()
+  {
+   private File next;
+   
+   File[] l1list = rootDir.listFiles();
+   int l1ptr = 0;
+
+   File[] l2list = new File[0];
+   int l2ptr = 0;
+
+   File[] l3list = l2list;
+   int l3ptr = 0;
+
+   private File getNextL3()
+   {
+    if( l3ptr < l3list.length )
+     return l3list[l3ptr++];
+    
+    l3list = getNextL2();
+    
+    if( l3list == null )
+     return null;
+    
+    l3ptr = 0;
+    
+    return l3list[l3ptr++];
+   }
+   
+   private File[] getNextL2()
+   {
+    while(true)
+    {
+     while(l2ptr < l2list.length)
+     {
+      File n = l2list[l2ptr++];
+
+      if(n.isDirectory())
+      {
+       File[] fa = n.listFiles();
+
+       if(fa.length > 0)
+        return fa;
+      }
+     }
+
+     l2list = getNextL1();
+
+     if(l2list == null)
+      return null;
+
+     l2ptr = 0;
+    }
+   }
+
+   private File[] getNextL1()
+   {
+    while(l1ptr < l1list.length)
+    {
+     File n = l1list[l1ptr++];
+
+     if(n.isDirectory())
+     {
+      File[] fa = n.listFiles();
+
+      if(fa.length > 0)
+       return fa;
+     }
+    }
+    
+    return null;
+   }
+
+   
+   @Override
+   public boolean hasNext()
+   {
+    next = getNextL3();
+   
+    return next != null;
+   }
+
+   @Override
+   public File next()
+   {
+    if( next != null )
+    {
+     File f = next;
+     next=null;
+     return f;
+    }
+    
+    hasNext();    
+    
+    return next;
+   }
+
+   @Override
+   public void remove()
+   {
+    throw new UnsupportedOperationException();
+   }
+  };
+ }
+ 
  public void shutdown()
  {
  }
