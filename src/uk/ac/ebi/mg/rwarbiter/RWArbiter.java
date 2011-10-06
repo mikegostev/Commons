@@ -3,7 +3,7 @@ package uk.ac.ebi.mg.rwarbiter;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class RWArbiter
+public class RWArbiter<TT>
 {
  private ReentrantLock lock = new ReentrantLock();
  
@@ -13,7 +13,14 @@ public class RWArbiter
  private int readReqs=0;
  private ReadWriteToken writeToken=null;
  
- public Object getReadLock()
+ private TokenFactory<TT> factory;
+ 
+ public RWArbiter( TokenFactory<TT> tf )
+ {
+  factory = tf;
+ }
+ 
+ public TT getReadLock()
  {
   try
   {
@@ -24,7 +31,7 @@ public class RWArbiter
 
    readReqs++;
    
-   return new ReadWriteToken();
+   return factory.createToken();
   }
   finally
   {
@@ -32,7 +39,7 @@ public class RWArbiter
   }
  }
  
- public Object getWriteLock() throws InterruptedException
+ public TT getWriteLock() throws InterruptedException
  {
   try
   {
@@ -46,7 +53,7 @@ public class RWArbiter
    if( readReqs > 0 )
     readReleased.awaitUninterruptibly();
    
-   return new ReadWriteToken();
+   return factory.createToken();
   }
   finally
   {
@@ -54,14 +61,14 @@ public class RWArbiter
   }
  }
 
- public boolean checkTokenValid( Object tobj )
- {
-  return  tobj instanceof ReadWriteToken && ((ReadWriteToken)tobj).isActive();
- }
+// public boolean checkTokenValid( Object tobj )
+// {
+//  return  tobj instanceof ReadWriteToken && ((ReadWriteToken)tobj).isActive();
+// }
  
- public void releaseLock( Object tobj ) throws InvalidTokenException
+ public void releaseLock( TokenW tobj ) throws InvalidTokenException
  {
-  if( ! checkTokenValid(tobj) )
+  if( ! tobj.isActive() )
    throw new InvalidTokenException();
   
   try
@@ -77,7 +84,7 @@ public class RWArbiter
    }
    else
    {
-    ((ReadWriteToken)tobj).setActive(false);
+    tobj.setActive(false);
     
     readReqs--;
     
