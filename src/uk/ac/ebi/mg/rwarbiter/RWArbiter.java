@@ -3,7 +3,7 @@ package uk.ac.ebi.mg.rwarbiter;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class RWArbiter<TT>
+public class RWArbiter<TT extends TokenW>
 {
  private ReentrantLock lock = new ReentrantLock();
  
@@ -39,7 +39,12 @@ public class RWArbiter<TT>
   }
  }
  
- public TT getWriteLock() throws InterruptedException
+ public boolean isWriteToken( TokenW t )
+ {
+  return writeToken == t;
+ }
+ 
+ public TT getWriteLock()
  {
   try
   {
