@@ -104,7 +104,7 @@ public class RWArbiter<TT extends TokenW>
   
  }
  
- private class ReadWriteToken
+ public static class ReadWriteToken implements TokenW
  {
   boolean active = true;
 
