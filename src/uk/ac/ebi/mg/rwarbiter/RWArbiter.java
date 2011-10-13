@@ -11,7 +11,7 @@ public class RWArbiter<TT extends TokenW>
  private Condition readReleased = lock.newCondition();
  
  private int readReqs=0;
- private ReadWriteToken writeToken=null;
+ private TT writeToken=null;
  
  private TokenFactory<TT> factory;
  
@@ -53,12 +53,12 @@ public class RWArbiter<TT extends TokenW>
    while( writeToken != null )
     writeReleased.awaitUninterruptibly();
 
-   writeToken=new ReadWriteToken();
+   writeToken=factory.createToken();
    
    if( readReqs > 0 )
     readReleased.awaitUninterruptibly();
    
-   return factory.createToken();
+   return writeToken;
   }
   finally
   {
