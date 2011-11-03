@@ -841,4 +841,49 @@ public class StringUtils
 
   return new String(bais.toByteArray(), enc);
  }
+ 
+ public static String millisToString( long t )
+ {
+  StringBuilder sb = new StringBuilder();
+  
+  long frac = t/3600000L;
+  
+  if( frac > 0 )
+  {
+   sb.append(frac).append("h");
+   t=t-frac*3600000;
+  }
+
+  frac = t/60000;
+  
+  if( frac > 0 )
+  {
+   if( sb.length() > 0 )
+    sb.append(' ');
+   
+   sb.append(frac).append("m");
+   t=t-frac*60000;
+  }
+  
+  frac = t/1000;
+  
+  if( frac > 0 )
+  {
+   if( sb.length() > 0 )
+    sb.append(' ');
+   
+   sb.append(frac).append("s");
+   t=t-frac*1000;
+  }
+  
+  if( t > 0 )
+  {
+   if( sb.length() > 0 )
+    sb.append(' ');
+   
+   sb.append(t).append("ms");
+  }
+
+  return sb.toString();
+ }
 }
