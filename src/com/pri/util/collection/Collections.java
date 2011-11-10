@@ -1,5 +1,6 @@
 package com.pri.util.collection;
 
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -43,6 +44,11 @@ public class Collections
  {
   private static final long serialVersionUID = 020110716L;
 
+  private Object readResolve() throws ObjectStreamException
+  {
+   return Collections.EMPTY_COLLECTION;
+  }
+  
   public int size()
   {
    return 0;
@@ -185,6 +191,12 @@ public class Collections
 
  private static class EmptyMap implements Map<Object, Object>, Serializable
  {
+  private static final long serialVersionUID = 20111109L;
+
+  private Object readResolve() throws ObjectStreamException
+  {
+   return Collections.EMPTY_MAP;
+  }
 
   @Override
   public int size()
