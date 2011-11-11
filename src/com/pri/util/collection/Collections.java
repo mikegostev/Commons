@@ -2,6 +2,7 @@ package com.pri.util.collection;
 
 import java.io.ObjectStreamException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -270,5 +271,54 @@ public class Collections
   }
   
  }
+
+ public static <T> Collection<T> compactCollection( Collection<T> lst )
+ {
+  if( lst == null || lst.size() == 0 )
+   return emptyList();
+ 
+  if( lst.size() == 1 )
+   return java.util.Collections.singletonList( lst.iterator().next() );
+  
+  return new ArrayList<T>( lst );
+ }
+
+ public static <T> List<T> compactList( List<T> lst )
+ {
+  if( lst == null || lst.size() == 0 )
+   return emptyList();
+ 
+  if( lst.size() == 1 )
+   return java.util.Collections.singletonList( lst.get(0) );
+  
+  return new ArrayList<T>( lst );
+ }
+ 
+ public static <T> List<T> addToCompactList( List<T> lst, T el )
+ {
+  if( lst == null )
+  {
+   lst = new ArrayList<T>();
+   
+   lst.add(el);
+   
+   return lst;
+  }
+   
+   
+  if( lst.size() <=1 && ! (lst instanceof ArrayList) )
+  {
+   List<T> newLst = new ArrayList<T>( );
+   
+   newLst.addAll(lst);
+   newLst.add(el);
+   
+   return newLst;
+  }
+
+  lst.add(el);
+  return lst;
+ }
+
  
 }
