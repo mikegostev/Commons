@@ -28,6 +28,66 @@ import com.pri.util.stream.StreamPump;
  */
 public class StringUtils
 {
+ public interface Output
+ {
+  Output append( String str );
+
+  Output append(char c);
+ }
+ 
+ public static class StringBuilderOutput implements Output
+ {
+  private StringBuilder sb;
+  
+  public StringBuilderOutput( StringBuilder s )
+  {
+   sb=s;
+  }
+
+  @Override
+  public Output append(String str)
+  {
+   sb.append(str);
+   
+   return this;
+  }
+
+  @Override
+  public Output append(char c)
+  {
+   sb.append(c);
+   
+   return this;
+  }
+ }
+ 
+ public static class StringBufferOutput implements Output
+ {
+  private StringBuffer sb;
+  
+  public StringBufferOutput( StringBuffer s )
+  {
+   sb=s;
+  }
+
+  @Override
+  public Output append(String str)
+  {
+   sb.append(str);
+   
+   return this;
+  }
+
+  @Override
+  public Output append(char c)
+  {
+   sb.append(c);
+   
+   return this;
+  }
+ }
+
+ 
  public static class ReplacePair implements Comparable<ReplacePair>
  {
   char subject;
@@ -374,10 +434,19 @@ public class StringUtils
  */
  public static StringBuilder appendBackslashed( StringBuilder sb, String str, char ch )
  {
-  return appendEscaped( sb, str, ch, '\\');
+  appendEscaped( new StringBuilderOutput(sb), str, ch, '\\');
+
+  return sb;
  }
 
  public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch, char escChar )
+ {
+  appendEscaped(new StringBufferOutput(sb), str, ch, escChar);
+  
+  return sb;
+ }
+ 
+ public static Output appendEscaped( Output sb, String str, char ch, char escChar )
  {
   int cPos,ePos;
   
@@ -409,39 +478,41 @@ public class StringUtils
   * Adds backslashes before every char ch
   * 
  */
- public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch )
+ public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escCh )
  {
-  return appendEscaped( sb, str, ch, '\\');
- }
-
- public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escChar )
- {
-  int cPos,ePos;
-
-  cPos=0;
-  while( cPos < str.length() )
-  {
-   ePos=str.indexOf(ch,cPos);
-    
-   if( ePos == -1 )
-   {
-    if( cPos == 0)
-     sb.append(str);
-    else
-     sb.append(str.substring(cPos));
-    
-    return sb;
-   }
-   
-   sb.append(str.substring(cPos,ePos));
-   sb.append(escChar);
-   sb.append(ch);
-   
-   cPos=ePos+1;
-  }
- 
+  appendEscaped(new StringBuilderOutput(sb), str, ch, escCh );
+  
   return sb;
  }
+
+// public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escChar )
+// {
+//  int cPos,ePos;
+//
+//  cPos=0;
+//  while( cPos < str.length() )
+//  {
+//   ePos=str.indexOf(ch,cPos);
+//    
+//   if( ePos == -1 )
+//   {
+//    if( cPos == 0)
+//     sb.append(str);
+//    else
+//     sb.append(str.substring(cPos));
+//    
+//    return sb;
+//   }
+//   
+//   sb.append(str.substring(cPos,ePos));
+//   sb.append(escChar);
+//   sb.append(ch);
+//   
+//   cPos=ePos+1;
+//  }
+// 
+//  return sb;
+// }
 
  public static StringBuilder appendAsCStr( StringBuilder sb, String str )
  {
@@ -885,5 +956,12 @@ public class StringUtils
   }
 
   return sb.toString();
+ }
+
+ public static Output appendBackslashed(Output out, String str, char ch)
+ {
+  appendEscaped( out, str, ch, '\\');
+
+  return out;
  }
 }
