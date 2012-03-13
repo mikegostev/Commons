@@ -9,14 +9,30 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
 {
  private static final long serialVersionUID = 1750397661035015383L;
  
- private Collection<? extends Collection<E>> collecs;
+ private Collection<? extends Collection<? extends E>> collecs;
  private int size=0;
  
- public CollectionsUnion( Collection<E> ... cs )
+// public CollectionsUnion( Collection<E> ... cs )
+// {
+//  Collection<Collection<E>> col = new ArrayList<Collection<E>>( cs.length );
+//  
+//  for( Collection<E> c : cs )
+//  {
+//   if( c == null )
+//    continue;
+//   
+//   col.add(c);
+//   size+=c.size();
+//  }
+//  
+//  collecs=col;
+// }
+ 
+ public CollectionsUnion( Collection<? extends E> ... cs )
  {
-  Collection<Collection<E>> col = new ArrayList<Collection<E>>( cs.length );
+  Collection<Collection<? extends E>> col = new ArrayList<Collection<? extends E>>( cs.length );
   
-  for( Collection<E> c : cs )
+  for( Collection<? extends E> c : cs )
   {
    if( c == null )
     continue;
@@ -28,11 +44,11 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   collecs=col;
  }
  
- public CollectionsUnion( Collection<? extends Collection<E>> cs )
+ public CollectionsUnion( Collection<? extends Collection<? extends E>> cs )
  {
   collecs=cs;
   
-  for( Collection<E> c : collecs )
+  for( Collection<? extends E> c : collecs )
    if( c != null )
     size += c.size();
  }
@@ -60,7 +76,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
  @Override
  public boolean contains(Object o)
  {
-  for( Collection<E> c : collecs )
+  for( Collection<? extends E> c : collecs )
    if( c != null && c.contains(o) )
     return true;
   
@@ -87,13 +103,13 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   
   return new Iterator<E>(){
    
-   Iterator<? extends Collection<E>> citer = collecs.iterator();
-   Iterator<E> eiter=null;
+   Iterator<? extends Collection<? extends E>> citer = collecs.iterator();
+   Iterator<? extends E> eiter=null;
    
    {
     while( citer.hasNext() )
     {
-     Collection<E> c = citer.next();
+     Collection<? extends E> c = citer.next();
      
      if( c != null )
      {
@@ -118,7 +134,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
      
      while( citer.hasNext() )
      {
-      Collection<E> c = citer.next();
+      Collection<? extends E> c = citer.next();
       
       if( c != null )
       {
@@ -175,7 +191,7 @@ public class CollectionsUnion<E> implements Collection<E>, Serializable
   
   Object[] res = new Object[size];
   
-  for( Collection<E> c : collecs )
+  for( Collection<? extends E> c : collecs )
   {
    if( c == null )
     continue;
