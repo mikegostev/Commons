@@ -7,9 +7,9 @@ import java.util.NoSuchElementException;
 
 public class CollectionMapCollection<E> implements Collection<E>
 {
- private Map<?,Collection<E>> map;
+ private Map<?,? extends Collection<E>> map;
  
- public CollectionMapCollection( Map<?,Collection<E>> m )
+ public CollectionMapCollection( Map<?,? extends Collection<E>> m )
  {
   map=m;
  }
@@ -62,7 +62,7 @@ public class CollectionMapCollection<E> implements Collection<E>
   
   return new Iterator<E>(){
    
-   Iterator<Collection<E>> citer = map.values().iterator();
+   Iterator<? extends Collection<E>> citer = map.values().iterator();
 
    Iterator<E> eiter=null;
    
