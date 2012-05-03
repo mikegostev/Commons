@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.pri.util.M2Pcodec;
+
 public class FileDepot implements Iterable<File>
 {
  private File rootDir;
@@ -42,25 +44,26 @@ public class FileDepot implements Iterable<File>
  
  public File getFilePath( String fname, long timestamp )
  {
-  String name = fname;
+  fname = M2Pcodec.encode(fname);
+  
+  String pathSplit = null;
   
   char tail[] = new char[4];
   int nmLen;
 
   if( useHash )
   {
-   name = Integer.toHexString(fname.hashCode() );
-   nmLen = name.length();
+   pathSplit = Integer.toHexString( fname.hashCode() );
+   nmLen = pathSplit.length();
   }
   else
   {
-   name = fname;
-
+   pathSplit = fname;
+   
    int extPos = fname.lastIndexOf('.');
    
-   
    if( extPos == -1 )
-    nmLen = fname.length();
+    nmLen = pathSplit.length();
    else
     nmLen = extPos;
   }
@@ -72,12 +75,7 @@ public class FileDepot implements Iterable<File>
     tail[tail.length-i]='_';
    else
    {
-    char dg = name.charAt( nmLen-i );
-    
-//    dg = Character.toLowerCase(dg);
-//    
-//    if( ! Character.isDigit(dg) )
-//     dg = '0';
+    char dg = pathSplit.charAt( nmLen-i );
     
     tail[tail.length-i]=dg;
    }
