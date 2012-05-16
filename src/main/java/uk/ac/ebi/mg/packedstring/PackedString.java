@@ -3,17 +3,51 @@ package uk.ac.ebi.mg.packedstring;
 import uk.ac.ebi.mg.packedstring.DualBandString.PackingImpossibleException;
 
 
-public class PackedString
+public abstract class PackedString
 {
-
- private PackedString()
+ private static boolean packingDisabled = false;
+ private static int packingThreshold = 10;
+ 
+ private static final String disableProperty = "packedstring.disable";
+ private static final String thresholdProperty = "packedstring.threshold";
+ 
+ static
+ {
+  String val = System.getProperty(disableProperty);
+  
+  if( val !=null && (val.equalsIgnoreCase("true") || val.equalsIgnoreCase("yes") || val.equals("1")) )
+   packingDisabled = true;
+  
+  val = System.getProperty(thresholdProperty);
+  
+  if( val != null )
+  {
+   try
+   {
+    packingThreshold = Integer.parseInt(val);
+   
+    if( packingThreshold < 0 )
+     packingThreshold = 0;
+   }
+   catch (Exception e)
+   {
+   }
+  }
+ }
+ 
+ protected PackedString()
  {}
+ 
+ public abstract int length();
  
  public static Object pack( String str )
  {
+  if( packingDisabled )
+   return str;
+  
   int len = str.length();
   
-  if( len < 10 )
+  if( len < packingThreshold )
    return str;
   
   char top, bottom;

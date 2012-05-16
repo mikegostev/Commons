@@ -2,7 +2,7 @@ package uk.ac.ebi.mg.packedstring;
 
 import java.io.Serializable;
 
-public class SingleBandString implements Serializable
+public class SingleBandString extends PackedString implements Serializable
 {
 
  private static final long serialVersionUID = 1L;
@@ -30,6 +30,12 @@ public class SingleBandString implements Serializable
    chars[i] = (char)(bytes[i]+offset);
   
   return new String(chars);
+ }
+
+ @Override
+ public int length()
+ {
+  return bytes.length;
  }
 
 }

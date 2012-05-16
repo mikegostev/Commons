@@ -3,7 +3,7 @@ package uk.ac.ebi.mg.packedstring;
 import java.io.Serializable;
 
 
-public class DualBandString implements Serializable
+public class DualBandString extends PackedString implements Serializable
 {
 
  private static final long serialVersionUID = 1L;
@@ -78,4 +78,12 @@ public class DualBandString implements Serializable
   
   return new String(chars);
  }
+
+ @Override
+ public int length()
+ {
+  return bytes.length;
+ }
+
+
 }
