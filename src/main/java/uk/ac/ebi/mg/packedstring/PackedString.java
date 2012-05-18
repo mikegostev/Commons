@@ -5,18 +5,18 @@ import uk.ac.ebi.mg.packedstring.DualBandString.PackingImpossibleException;
 
 public abstract class PackedString
 {
- private static boolean packingDisabled = false;
+ private static boolean packingEnabled = false;
  private static int packingThreshold = 10;
  
- private static final String disableProperty = "packedstring.disable";
+ private static final String enableProperty = "packedstring.enable";
  private static final String thresholdProperty = "packedstring.threshold";
  
  static
  {
-  String val = System.getProperty(disableProperty);
+  String val = System.getProperty(enableProperty);
   
   if( val !=null && (val.equalsIgnoreCase("true") || val.equalsIgnoreCase("yes") || val.equals("1")) )
-   packingDisabled = true;
+   packingEnabled = true;
   
   val = System.getProperty(thresholdProperty);
   
@@ -42,7 +42,7 @@ public abstract class PackedString
  
  public static Object pack( String str )
  {
-  if( packingDisabled )
+  if( ! packingEnabled )
    return str;
   
   int len = str.length();
@@ -70,7 +70,7 @@ public abstract class PackedString
   
   try
   {
-   return new DualBandString(str, bottom, top );
+   return new DualBandString( str, bottom, top );
   }
   catch(PackingImpossibleException e)
   {
