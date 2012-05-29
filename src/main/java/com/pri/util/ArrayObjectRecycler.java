@@ -11,7 +11,8 @@ public class ArrayObjectRecycler<T>
   buf = new Object[sz];
  }
  
- public synchronized T getObject()
+ @SuppressWarnings("unchecked")
+public synchronized T getObject()
  {
   if( ptr == 0 )
    return null;
