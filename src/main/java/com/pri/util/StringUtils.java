@@ -736,7 +736,62 @@ public class StringUtils
  
 
  
- 
+ public static String xmlEscaped( String s )
+ {
+  StringBuilder sb = null;
+  
+  int len = s.length();
+  
+  for( int i=0; i < len; i++ )
+  {
+   char ch = s.charAt(i);
+   
+   if( ch < 0x20 && ch != 0x0D && ch != 0x0A && ch != 0x09 )
+   {
+    if( sb == null )
+    {
+     sb = new StringBuilder( len + 50 );
+     sb.append( s.substring(0, i) );
+    }
+
+    int rem = ch%16;
+    
+    sb.append("&#").append( (ch > 15)?'1':'0' ).append( (char)(rem > 9?(rem-10+'A'):(rem+'0')) ).append(';');
+   }
+   else
+   {
+    boolean replaced = false;
+    
+    for( ReplacePair p : htmlPairs )
+    {
+     if( ch == p.getSubject() )
+     {
+      if( sb == null )
+      {
+       sb = new StringBuilder( len + 50 );
+       sb.append( s.substring(0, i) );
+      }
+      
+      sb.append( p.getReplacement() );
+      replaced = true;
+      break;
+     }
+    }
+    
+    if( ! replaced )
+    {
+     if( sb != null )
+      sb.append(ch);
+    }
+   }
+  }
+  
+  if( sb != null )
+   return sb.toString();
+  
+  return s;
+ }
+
 
 
  public static String htmlEscaped( String s )
