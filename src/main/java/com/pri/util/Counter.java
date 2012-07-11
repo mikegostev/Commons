@@ -36,6 +36,12 @@ public class Counter extends Number
   return ++count;
  }
 
+ public int add( int v )
+ {
+  return count+=v;
+ }
+
+ 
  public int dec()
  {
   return --count;
