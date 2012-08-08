@@ -37,7 +37,7 @@ public class StringUtils
  
  public static class StringBuilderOutput implements Output
  {
-  private StringBuilder sb;
+  private final StringBuilder sb;
   
   public StringBuilderOutput( StringBuilder s )
   {
@@ -63,7 +63,7 @@ public class StringUtils
  
  public static class StringBufferOutput implements Output
  {
-  private StringBuffer sb;
+  private final StringBuffer sb;
   
   public StringBufferOutput( StringBuffer s )
   {
@@ -122,11 +122,13 @@ public class StringUtils
    this.replacement = second;
   }
 
+  @Override
   public int compareTo(ReplacePair toCmp)
   {
    return subject-toCmp.getSubject();
   }
   
+  @Override
   public boolean equals( Object o )
   {
    return subject==((ReplacePair)o).getSubject();
@@ -1018,5 +1020,39 @@ public class StringUtils
   appendEscaped( out, str, ch, '\\');
 
   return out;
+ }
+ 
+ public static List<String> splitString( String str, char sep )
+ {
+  List<String> res = new ArrayList<String>();
+  
+  int ptr = 0;
+  int len = str.length();
+  
+  while( true )
+  {
+   if( ptr == len )
+   {
+    res.add("");
+    break;
+   }
+   
+   int pos = str.indexOf( sep, ptr );
+   
+   if( pos == -1 )
+   {
+    if( res.size() == 0 )
+     res.add(str);
+    else
+     res.add( str.substring(ptr) );
+   
+    break;
+   }
+   
+   res.add( str.substring(ptr,pos) );
+   ptr = pos+1;
+  }
+  
+  return res;
  }
 }
