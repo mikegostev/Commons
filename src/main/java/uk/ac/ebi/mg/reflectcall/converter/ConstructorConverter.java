@@ -2,6 +2,7 @@ package uk.ac.ebi.mg.reflectcall.converter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 import uk.ac.ebi.mg.reflectcall.ConvertionException;
 import uk.ac.ebi.mg.reflectcall.String2ValueConverter;
@@ -16,7 +17,7 @@ public class ConstructorConverter implements String2ValueConverter
  }
 
  @Override
- public Object convert(String val, Class< ? > targetClass) throws ConvertionException
+ public Object convert(String val, Type targetType) throws ConvertionException
  {
   try
   {
@@ -24,7 +25,7 @@ public class ConstructorConverter implements String2ValueConverter
   }
   catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
   {
-   throw new ConvertionException("Constructor call error: "+e.getMessage()+") Target class: "+targetClass.getName());
+   throw new ConvertionException("Constructor call error: "+e.getMessage()+" Target class: "+targetType);
   }
  }
 

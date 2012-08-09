@@ -1,5 +1,7 @@
 package uk.ac.ebi.mg.reflectcall.converter;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,10 +22,24 @@ public class ArrayConverter implements String2ValueConverter
 
 
  @Override
- public Object convert(String val, Class< ? > targetClass) throws ConvertionException
+ public Object convert(String val, Type targetType) throws ConvertionException
  {
-  // TODO Auto-generated method stub
-  return null;
+  Class<?> elClass = ((Class<?>)targetType).getComponentType();
+  
+  List<String> parts = splitString(val);
+  
+  Object outarr = Array.newInstance((Class<?>)targetType,parts.size());
+  
+  int i=0;
+  for( String s : parts )
+   Array.set(outarr, i++, getFactory().getConverter(elClass, s).convert(s, elClass));
+  
+  return outarr;
+ }
+
+ public ConverterFactory getFactory()
+ {
+  return convFactory;
  }
 
  protected static List<String> splitString( String val )
@@ -40,7 +56,7 @@ public class ArrayConverter implements String2ValueConverter
   {
    char sep = val.charAt(1);
    
-   return StringUtils.splitString(val, sep);
+   return StringUtils.splitString(val.substring(2,val.length()-1), sep);
   }
   
   ArrayList< String > res = new ArrayList< String >(1);

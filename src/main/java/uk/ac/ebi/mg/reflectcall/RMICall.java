@@ -11,6 +11,7 @@ import java.util.Map;
 import uk.ac.ebi.mg.reflectcall.converter.ArrayConverter;
 import uk.ac.ebi.mg.reflectcall.converter.BeanObjectConverter;
 import uk.ac.ebi.mg.reflectcall.converter.ConstructorConverter;
+import uk.ac.ebi.mg.reflectcall.converter.FabMethodConverter;
 import uk.ac.ebi.mg.reflectcall.converter.PrimitiveTypeConverter;
 import uk.ac.ebi.mg.reflectcall.converter.StringConverter;
 

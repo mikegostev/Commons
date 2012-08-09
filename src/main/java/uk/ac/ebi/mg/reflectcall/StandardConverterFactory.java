@@ -3,6 +3,7 @@ package uk.ac.ebi.mg.reflectcall;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,40 +12,43 @@ import uk.ac.ebi.mg.reflectcall.converter.ArrayConverter;
 import uk.ac.ebi.mg.reflectcall.converter.BeanObjectConverter;
 import uk.ac.ebi.mg.reflectcall.converter.CollectionConverter;
 import uk.ac.ebi.mg.reflectcall.converter.ConstructorConverter;
+import uk.ac.ebi.mg.reflectcall.converter.FabMethodConverter;
 import uk.ac.ebi.mg.reflectcall.converter.PrimitiveTypeConverter;
 import uk.ac.ebi.mg.reflectcall.converter.StringConverter;
 
-public class StandardConvertorFactory implements ConverterFactory
+public class StandardConverterFactory implements ConverterFactory
 {
- private static StandardConvertorFactory instance;
+ private static StandardConverterFactory instance;
  private static Map<Class<?>, String2ValueConverter> standardConv = new HashMap<Class<?>, String2ValueConverter>();
 
- public static StandardConvertorFactory getInstance()
+ public static StandardConverterFactory getInstance()
  {
   if( instance == null )
-   instance = new StandardConvertorFactory();
+   instance = new StandardConverterFactory();
   
   return instance;
  }
 
  private Map<Class<?>, String2ValueConverter> customConv;
  
- public StandardConvertorFactory()
+ public StandardConverterFactory()
  {
  }
 
- public StandardConvertorFactory( Map<Class<?>, String2ValueConverter> cMap )
+ public StandardConverterFactory( Map<Class<?>, String2ValueConverter> cMap )
  {
   customConv = cMap;
  }
  
  @Override
- public String2ValueConverter getConverter(Class< ? > cls, String value)
+ public String2ValueConverter getConverter(Type typ, String value)
  {
-  if(cls == String.class)
+  if(typ == String.class)
    return StringConverter.getInstance();
-  else
+  else if( typ instanceof Class )
   {
+   Class<?> cls = (Class<?>)typ;
+   
    String2ValueConverter conv = null;
 
    if(customConv != null)
@@ -79,7 +83,7 @@ public class StandardConvertorFactory implements ConverterFactory
 
    if(!value.startsWith(bracketOverridePrefix) && value.charAt(value.length() - 1) == hashBrackets.charAt(1)
      && value.length() > 2 && value.charAt(0) == hashBrackets.charAt(0))
-    return new BeanObjectConverter();
+    return new BeanObjectConverter( this );
 
    Method fabMeth = null;
 

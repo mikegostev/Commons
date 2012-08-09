@@ -12,4 +12,9 @@ public class ConvertionException extends Exception
   super( string );
  }
 
+ public ConvertionException(String string, ReflectiveOperationException e)
+ {
+  super( string, e);
+ }
+
 }
