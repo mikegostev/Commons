@@ -30,7 +30,7 @@ public class BeanObjectConverter implements String2ValueConverter
   {
    bean = ((Class< ? >) targetClass).newInstance();
   }
-  catch(InstantiationException | IllegalAccessException e)
+  catch( Exception e)
   {
    throw new ConvertionException("Can't create object instance", e);
   }
@@ -55,7 +55,7 @@ public class BeanObjectConverter implements String2ValueConverter
     setter = bean.getClass().getMethod(methName, String.class);
     paramConv = StringConverter.getInstance();
    }
-   catch(NoSuchMethodException | SecurityException e)
+   catch(Exception e)
    {
    }
    
@@ -73,5 +73,7 @@ public class BeanObjectConverter implements String2ValueConverter
     }
    }
   }
+  
+  return null;
  }
 }

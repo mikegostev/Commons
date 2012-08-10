@@ -52,7 +52,7 @@ public class CollectionConverter extends ArrayConverter
   
   List<String> parts = splitString(val);
   
-  Collection<Object> outcoll = new ArrayList<>();
+  Collection<Object> outcoll = new ArrayList<Object>();
   
   
   for( String s : parts )

@@ -1,19 +1,11 @@
 package uk.ac.ebi.mg.reflectcall;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
-
-import uk.ac.ebi.mg.reflectcall.converter.ArrayConverter;
-import uk.ac.ebi.mg.reflectcall.converter.BeanObjectConverter;
-import uk.ac.ebi.mg.reflectcall.converter.ConstructorConverter;
-import uk.ac.ebi.mg.reflectcall.converter.FabMethodConverter;
-import uk.ac.ebi.mg.reflectcall.converter.PrimitiveTypeConverter;
-import uk.ac.ebi.mg.reflectcall.converter.StringConverter;
 
 public class RMICall
 {
@@ -60,93 +52,21 @@ public class RMICall
   
   int i=-1;
   
-  for( Class<?> cls : method.getParameterTypes() )
+  for( Type typ : method.getGenericParameterTypes() )
   {
    i++;
    
-   if( cls == String.class )
-    params[i] = input[i+1];
-   else
+   String2ValueConverter conv = new StandardConverterFactory(cConv).getConverter(typ, input[i+1]);
+   
+   try
    {
-    String2ValueConverter conv = null;
-    
-    if( cConv != null )
-     conv = cConv.get(cls);
-    
-    if( conv == null )
-     conv = directConverterMap.get(cls);
-
-    if( conv == null &&  cls.isPrimitive() )
-     conv = PrimitiveTypeConverter.getInstance();
-    
-    if( conv == null &&  cls.isArray() )
-     conv = ArrayConverter.getInstance();    
-    
-    if( conv != null )
-    {
-     try
-     {
-      params[i] = conv.convert(input[i+1], cls);
-      continue;
-     }
-     catch(ConvertionException e)
-     {
-      throw new ArgumentConversionException("Argument #"+i+" conversion error. Target class: "+cls.getName()+". "+e.getMessage(), i);
-     }
-    }
-    
-    Method fabMeth = null;
-    
-    try
-    {
-     fabMeth = cls.getMethod(fabricMethodName, String.class);
-     
-     if( ! Modifier.isStatic( fabMeth.getModifiers() ) || ! cls.isAssignableFrom(fabMeth.getReturnType()) )
-      fabMeth = null;
-    }
-    catch(NoSuchMethodException | SecurityException e1)
-    {
-    }
-    
-    if( fabMeth != null )
-    {
-     try
-     {
-      params[i] = fabMeth.invoke(null, input[i+1]) ;
-      continue;
-     }
-     catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e1)
-     {
-      throw new ArgumentConversionException("Argument #"+i+" conversion error. (Fabric method call error: "+e1.getMessage()+") Target class: "+cls.getName(), i);
-     }
-    }
-    
-    Constructor<?> ctor = null;
-
-    try
-    {
-     ctor = cls.getConstructor(String.class);
-    }
-    catch(NoSuchMethodException | SecurityException e)
-    {
-    }
-
-    if( ctor != null )
-    {
-     try
-     {
-      params[i] = ctor.newInstance(input[i+1]);
-      continue;
-     }
-     catch(InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-     {
-      throw new ArgumentConversionException("Argument #"+i+" conversion error. (Constructor call error: "+e.getMessage()+") Target class: "+cls.getName(), i);
-     }
-    }
-    
-    throw new ArgumentConversionException("Argument #"+i+" conversion error. No corresponding converter. Target class: "+cls.getName(), i);
-
+    params[i] = conv.convert(input[i+1], typ);
    }
+   catch(ConvertionException e)
+   {
+    throw new ArgumentConversionException("Argument #"+i+" conversion error. Target type: "+typ+". "+e.getMessage(), i);
+   }
+   
   }
   
   Object val = null;
@@ -155,7 +75,7 @@ public class RMICall
   {
    val = method.invoke(instance, params);
   }
-  catch(IllegalAccessException | IllegalArgumentException e)
+  catch( Exception e)
   {
    throw new MethodInvocationException("Invocation error",e);
   }
@@ -174,7 +94,14 @@ public class RMICall
    fmt = formatters.get(retClass);
    
   if( fmt != null )
-   return fmt.format(val);
+   try
+   {
+    return fmt.format(val, retClass);
+   }
+   catch(FormatterException e1)
+   {
+    return null;
+   }
 
   
   if(retClass.isPrimitive())
@@ -184,7 +111,7 @@ public class RMICall
     Method valueOfMeth = String.class.getMethod("valueOf", retClass);
     return (String) valueOfMeth.invoke(null, val);
    }
-   catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException e)
+   catch( Exception e)
    {
     throw new MethodInvocationException("Can't invoke String.valueOf method for arg: " + retClass.getName(), e);
    }
@@ -208,7 +135,14 @@ public class RMICall
    {
     
     for(int j = 0; j < len; j++)
-     sb.append( fmt.format(Array.get(val, j))).append('\n');
+     try
+     {
+      sb.append( fmt.format(Array.get(val, j), null)).append('\n');
+     }
+     catch( Exception e)
+     {
+      return null;
+     }
     
     return sb.toString();
    }
@@ -220,7 +154,7 @@ public class RMICall
     {
      valueOfMeth = String.class.getMethod("valueOf", retClass);
     }
-    catch(NoSuchMethodException | SecurityException | IllegalArgumentException e)
+    catch( Exception e)
     {
      throw new MethodInvocationException("Can't find String.valueOf method for arg: " + retClass.getName(), e);
     }
@@ -230,7 +164,7 @@ public class RMICall
      for(int j = 0; j < len; j++)
       sb.append(valueOfMeth.invoke(null, Array.get(val, j))).append('\n');
     }
-    catch(ArrayIndexOutOfBoundsException | IllegalAccessException | IllegalArgumentException e)
+    catch( Exception e)
     {
      throw new MethodInvocationException("Can't invoke String.valueOf method for arg: " + retClass.getName(), e);
     }
@@ -243,78 +177,5 @@ public class RMICall
   }
   
   return val.toString();
- }
- 
- private static String2ValueConverter getConverter( Class<?> cls, String value, Map<Class<?>, String2ValueConverter> cConv)
- {
-  if(cls == String.class)
-   return StringConverter.getInstance();
-  else
-  {
-   String2ValueConverter conv = null;
-
-   if(cConv != null)
-    conv = cConv.get(cls);
-
-   if(conv == null)
-    conv = directConverterMap.get(cls);
-
-   if(conv == null && cls.isPrimitive())
-    conv = PrimitiveTypeConverter.getInstance();
-
-   if(conv == null && cls.isArray())
-    conv = ArrayConverter.getInstance();
-
-   if(conv != null)
-    return conv;
-
-   //   {
-   //    try
-   //    {
-   //     params[i] = conv.convert(input[i+1], cls);
-   //     continue;
-   //    }
-   //    catch(ConvertionException e)
-   //    {
-   //     throw new ArgumentConversionException("Argument #"+i+" conversion error. Target class: "+cls.getName()+". "+e.getMessage(), i);
-   //    }
-   //   }
-
-   if(!value.startsWith(bracketOverridePrefix) && value.charAt(value.length() - 1) == hashBrackets.charAt(1)
-     && value.length() > bracketOverridePrefix.length() + 2 && value.charAt(bracketOverridePrefix.length()) == hashBrackets.charAt(0))
-    return new BeanObjectConverter();
-
-   Method fabMeth = null;
-
-   try
-   {
-    fabMeth = cls.getMethod(fabricMethodName, String.class);
-
-    if(!Modifier.isStatic(fabMeth.getModifiers()) || !cls.isAssignableFrom(fabMeth.getReturnType()))
-     fabMeth = null;
-   }
-   catch(NoSuchMethodException | SecurityException e1)
-   {
-   }
-
-   if(fabMeth != null)
-    return new FabMethodConverter(fabMeth);
-
-   Constructor< ? > ctor = null;
-
-   try
-   {
-    ctor = cls.getConstructor(String.class);
-   }
-   catch(NoSuchMethodException | SecurityException e)
-   {
-   }
-
-   if(ctor != null)
-    return new ConstructorConverter(ctor);
-
-  }
-
- }
- 
+ } 
 }

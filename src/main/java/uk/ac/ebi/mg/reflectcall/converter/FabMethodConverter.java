@@ -1,6 +1,5 @@
 package uk.ac.ebi.mg.reflectcall.converter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 
@@ -23,7 +22,7 @@ public class FabMethodConverter implements String2ValueConverter
   {
    return fabMeth.invoke(null, val) ;
   }
-  catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException e1)
+  catch( Exception e1)
   {
    throw new ConvertionException("Fabric method call error: "+e1.getMessage()+") Target type: "+targetType);
   }

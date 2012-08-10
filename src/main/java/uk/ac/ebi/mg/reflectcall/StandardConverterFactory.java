@@ -94,7 +94,7 @@ public class StandardConverterFactory implements ConverterFactory
     if(!Modifier.isStatic(fabMeth.getModifiers()) || !cls.isAssignableFrom(fabMeth.getReturnType()))
      fabMeth = null;
    }
-   catch(NoSuchMethodException | SecurityException e1)
+   catch( Exception e1)
    {
    }
 
@@ -107,7 +107,7 @@ public class StandardConverterFactory implements ConverterFactory
    {
     ctor = cls.getConstructor(String.class);
    }
-   catch(NoSuchMethodException | SecurityException e)
+   catch( Exception e)
    {
    }
 
