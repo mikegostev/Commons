@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.ebi.mg.reflectcall.ConverterFactory;
-import uk.ac.ebi.mg.reflectcall.ConvertionException;
 import uk.ac.ebi.mg.reflectcall.String2ValueConverter;
+import uk.ac.ebi.mg.reflectcall.exception.ConvertionException;
 
 import com.pri.util.StringUtils;
 
@@ -28,7 +28,7 @@ public class ArrayConverter implements String2ValueConverter
   
   List<String> parts = splitString(val);
   
-  Object outarr = Array.newInstance((Class<?>)targetType,parts.size());
+  Object outarr = Array.newInstance(elClass,parts.size());
   
   int i=0;
   for( String s : parts )

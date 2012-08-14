@@ -3,8 +3,8 @@ package uk.ac.ebi.mg.reflectcall.converter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Type;
 
-import uk.ac.ebi.mg.reflectcall.ConvertionException;
 import uk.ac.ebi.mg.reflectcall.String2ValueConverter;
+import uk.ac.ebi.mg.reflectcall.exception.ConvertionException;
 
 public class ConstructorConverter implements String2ValueConverter
 {
