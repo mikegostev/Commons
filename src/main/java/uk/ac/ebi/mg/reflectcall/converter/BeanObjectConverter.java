@@ -5,18 +5,18 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import uk.ac.ebi.mg.reflectcall.ConverterFactory;
-import uk.ac.ebi.mg.reflectcall.ConvertionException;
 import uk.ac.ebi.mg.reflectcall.String2ValueConverter;
+import uk.ac.ebi.mg.reflectcall.exception.ConvertionException;
 
 import com.pri.util.StringUtils;
 
 public class BeanObjectConverter implements String2ValueConverter
 {
- private ConverterFactory factory;
+ private final ConverterFactory factory;
  
- public BeanObjectConverter(ConverterFactory standardConvertorFactory)
+ public BeanObjectConverter(ConverterFactory f)
  {
-  // TODO Auto-generated constructor stub
+  factory=f;
  }
 
  @Override
@@ -32,7 +32,7 @@ public class BeanObjectConverter implements String2ValueConverter
   }
   catch( Exception e)
   {
-   throw new ConvertionException("Can't create object instance", e);
+   throw new ConvertionException("Can't create object instance for class "+targetClass, e);
   }
 
   for(String s : parts)
@@ -50,10 +50,13 @@ public class BeanObjectConverter implements String2ValueConverter
    
    String2ValueConverter paramConv = null;
    
+   Type tgtType = null;
+   
    try
    {
     setter = bean.getClass().getMethod(methName, String.class);
     paramConv = StringConverter.getInstance();
+    tgtType = String.class;
    }
    catch(Exception e)
    {
@@ -65,15 +68,25 @@ public class BeanObjectConverter implements String2ValueConverter
     {
      if( methName.equals(m.getName()) && m.getParameterTypes().length == 1 )
      {
-      paramConv = factory.getConverter(m.getParameterTypes()[0], pval);
+      tgtType=m.getParameterTypes()[0];
+      paramConv = factory.getConverter(tgtType, pval);
       setter = m;
       
       break;
      }
     }
    }
+   
+   try
+   {
+    setter.invoke(bean, paramConv.convert(pval, tgtType));
+   }
+   catch(Exception e)
+   {
+    throw new ConvertionException("Can't call setter method '"+methName+"' for class "+targetClass);
+   }
   }
   
-  return null;
+  return bean;
  }
 }

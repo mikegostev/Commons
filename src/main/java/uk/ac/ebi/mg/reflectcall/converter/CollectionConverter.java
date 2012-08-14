@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.List;
 
 import uk.ac.ebi.mg.reflectcall.ConverterFactory;
-import uk.ac.ebi.mg.reflectcall.ConvertionException;
+import uk.ac.ebi.mg.reflectcall.exception.ConvertionException;
 
 public class CollectionConverter extends ArrayConverter
 {
