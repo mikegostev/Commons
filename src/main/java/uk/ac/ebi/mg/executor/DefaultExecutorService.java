@@ -9,19 +9,27 @@ public class DefaultExecutorService
 {
  private static ExecutorService instance;
  
- public static ExecutorService getExecutorService()
+ public static void init()
  {
-  if( instance != null )
-   return instance;
-  
-  return instance = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors()*2,
+  instance = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors()*2,
     60L, TimeUnit.SECONDS,
     new SynchronousQueue<Runnable>());
+ }
+ 
+ public static ExecutorService getExecutorService()
+ {
+   return instance;
  }
  
  public static void setExecutorService( ExecutorService svc )
  {
   instance = svc;
+ }
+ 
+ public static void shutdown()
+ {
+  if( instance != null )
+   shutdown();
  }
 
 }
