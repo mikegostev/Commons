@@ -29,7 +29,7 @@ public class DefaultExecutorService
  public static void shutdown()
  {
   if( instance != null )
-   shutdown();
+   instance.shutdown();
  }
 
 }

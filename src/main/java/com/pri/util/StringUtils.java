@@ -133,6 +133,12 @@ public class StringUtils
   {
    return subject==((ReplacePair)o).getSubject();
   }
+
+  @Override
+  public int hashCode()
+  {
+   return subject;
+  }
   
  }
 
