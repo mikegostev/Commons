@@ -10,7 +10,7 @@ import com.pri.util.M2Pcodec;
 
 public class FileDepot implements Iterable<File>
 {
- private File rootDir;
+ private final File rootDir;
  private boolean useHash = false;
 
  public FileDepot( File rt ) throws IOException
@@ -36,13 +36,17 @@ public class FileDepot implements Iterable<File>
   rootDir = rt;
  }
 
+ public File getRootDir()
+ {
+  return rootDir;
+ }
+ 
  public File getFilePath( String fname )
  {
   return getFilePath(fname, -1L);
  }
 
- 
- public File getFilePath( String fname, long timestamp )
+ public String getRelativeFilePath( String fname, long timestamp )
  {
   fname = M2Pcodec.encode(fname);
   
@@ -81,14 +85,22 @@ public class FileDepot implements Iterable<File>
    }
   }
   
+  String relPath = "xx"+tail[0]+tail[1]+"xx/xx"+tail[0]+tail[1]+tail[2]+tail[3]+"/";
   
-  File dir = new File(rootDir,"xx"+tail[0]+tail[1]+"xx/xx"+tail[0]+tail[1]+tail[2]+tail[3]+"/");
-  dir.mkdirs();
   
   if( timestamp == -1 )
-   return new File(dir,fname);
+   return relPath+fname;
   
-  return new File(dir,timestamp+"@"+fname);
+  return  relPath+timestamp+"@"+fname;
+ }
+
+ public File getFilePath( String fname, long timestamp )
+ {
+  
+  File file = new File(rootDir,getRelativeFilePath(fname, timestamp));
+  file.getParentFile().mkdirs();
+  
+  return file;
  }
  
  public List<File> listFiles()
@@ -103,6 +115,7 @@ public class FileDepot implements Iterable<File>
   return list;
  }
 
+ @Override
  public Iterator<File> iterator()
  {
   return new Iterator<File>()

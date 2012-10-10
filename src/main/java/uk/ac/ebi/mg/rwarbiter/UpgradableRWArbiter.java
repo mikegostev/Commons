@@ -3,19 +3,21 @@ package uk.ac.ebi.mg.rwarbiter;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
+public class UpgradableRWArbiter<RT extends Token, WT extends Token, URT extends Token>
 {
  private final ReentrantLock lock = new ReentrantLock();
  
  private final Condition writeReleased = lock.newCondition();
  private final Condition readReleased = lock.newCondition();
+ private final Condition uReadReleased = lock.newCondition();
  
  private int readReqs=0;
  private Token writeToken=null;
+ private Token uReadToken=null;
  
  private final TokenFactory<RT,WT,URT> factory;
  
- public RWArbiter( TokenFactory<RT,WT,URT> tf )
+ public UpgradableRWArbiter( TokenFactory<RT,WT,URT> tf )
  {
   factory = tf;
  }
@@ -39,6 +41,26 @@ public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
   }
  }
  
+ @SuppressWarnings("unchecked")
+ public URT getUpgradableReadLock()
+ {
+  try
+  {
+   lock.lock();
+   
+   while( uReadToken != null )
+    uReadReleased.awaitUninterruptibly();
+
+   uReadToken=factory.createUpgradableReadToken();
+   
+   return (URT)uReadToken;
+  }
+  finally
+  {
+   lock.unlock(); 
+  }
+ }
+ 
  public boolean isWriteToken( Token t )
  {
   return writeToken == t;
@@ -50,11 +72,13 @@ public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
   try
   {
    lock.lock();
-   
-   while( writeToken != null )
-    writeReleased.awaitUninterruptibly();
+  
+   while( uReadToken != null )
+    uReadReleased.awaitUninterruptibly();
 
-   writeToken=factory.createWriteToken();
+   uReadToken=factory.createWriteToken();
+
+   writeToken=uReadToken;
    
    if( readReqs > 0 )
     readReleased.awaitUninterruptibly();
@@ -67,10 +91,31 @@ public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
   }
  }
 
-// public boolean checkTokenValid( Object tobj )
-// {
-//  return  tobj instanceof ReadWriteToken && ((ReadWriteToken)tobj).isActive();
-// }
+ 
+ @SuppressWarnings("unchecked")
+ public WT upgradeReadLock( URT tobj ) throws InvalidTokenException
+ {
+  try
+  {
+   lock.lock();
+  
+   if( tobj != uReadToken )
+    throw new InvalidTokenException();
+   
+   tobj.setActive(false);
+   
+   writeToken=factory.createWriteToken();
+   
+   if( readReqs > 0 )
+    readReleased.awaitUninterruptibly();
+   
+   return (WT)writeToken;
+  }
+  finally
+  {
+   lock.unlock(); 
+  }
+ }
  
  public void releaseLock( Token tobj ) throws InvalidTokenException
  {
@@ -88,6 +133,14 @@ public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
     
     writeReleased.signalAll();
    }
+   
+   if( uReadToken == tobj )
+   {
+    uReadToken.setActive(false);
+    uReadToken = null;
+    
+    uReadReleased.signalAll();
+   }
    else
    {
     tobj.setActive(false);
@@ -104,4 +157,6 @@ public class RWArbiter<RT extends Token, WT extends Token, URT extends Token>
   }
   
  }
+
+
 }

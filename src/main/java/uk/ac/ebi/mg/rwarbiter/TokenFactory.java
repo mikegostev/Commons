@@ -1,6 +1,8 @@
 package uk.ac.ebi.mg.rwarbiter;
 
-public interface TokenFactory<TT>
+public interface TokenFactory<RT,WT,URT>
 {
- TT createToken();
+ RT createReadToken();
+ WT createWriteToken();
+ URT createUpgradableReadToken();
 }
