@@ -20,7 +20,7 @@ import java.util.Iterator;
  * @author mike
  */
 public class ConcurrentLinkedQueue<E> implements Iterable<E> {
-	private ListEl<E> marker = new ListEl<E>();
+	private final ListEl<E> marker = new ListEl<E>();
 	private int size = 0;
 
 	public ConcurrentLinkedQueue() {
@@ -94,7 +94,8 @@ public class ConcurrentLinkedQueue<E> implements Iterable<E> {
 		return false;
 	}
 
-	public Iterator<E> iterator() {
+	@Override
+ public Iterator<E> iterator() {
 		return new CLQIterator();
 	}
 
@@ -102,7 +103,8 @@ public class ConcurrentLinkedQueue<E> implements Iterable<E> {
 		return size;
 	}
 
-	public synchronized String toString() {
+	@Override
+ public synchronized String toString() {
 		StringBuffer sb = new StringBuffer();
 
 		sb.append("Size=").append(size).append(" [");
@@ -164,11 +166,13 @@ public class ConcurrentLinkedQueue<E> implements Iterable<E> {
 			ptr = marker;
 		}
 
-		public boolean hasNext() {
+		@Override
+  public boolean hasNext() {
 			return true;
 		}
 
-		public E next() {
+		@Override
+  public E next() {
 			synchronized (ConcurrentLinkedQueue.this) {
 				if (ptr == null) return null;
 
@@ -192,7 +196,8 @@ public class ConcurrentLinkedQueue<E> implements Iterable<E> {
 			}
 		}
 
-		public void remove() {
+		@Override
+  public void remove() {
 			synchronized (ConcurrentLinkedQueue.this) {
 				if (ptr.prev.side == ptr || ptr == marker) return;
 
@@ -200,7 +205,8 @@ public class ConcurrentLinkedQueue<E> implements Iterable<E> {
 			}
 		}
 
-		public void finalize() {
+		@Override
+  public void finalize() {
 			synchronized (ConcurrentLinkedQueue.this) {
 
 				if (ptr == null) return;

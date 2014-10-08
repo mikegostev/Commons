@@ -8,12 +8,15 @@ public interface IntList extends Iterable<Integer>
  int size();
  boolean isEmpty();
  boolean contains(int o);
+ @Override
  Iterator<Integer> iterator();
  int[] toArray();
  boolean add(int o);
  boolean remove(int o);
  void clear();
+ @Override
  boolean equals(Object o);
+ @Override
  int hashCode();
  int get(int index);
  int set(int index, int element);

@@ -1061,4 +1061,99 @@ public class StringUtils
   
   return res;
  }
+ 
+ public static void xmlEscaped( String s, Appendable out ) throws IOException
+ {
+  if( s == null )
+   return;
+  
+  int len = s.length();
+  
+  boolean escaping = false;
+  
+  for( int i=0; i < len; i++ )
+  {
+   char ch = s.charAt(i);
+   
+   if( ch < 0x20 && ch != 0x0D && ch != 0x0A && ch != 0x09 )
+   {
+    
+    if( ! escaping )
+    {
+     out.append( s.substring(0, i) );
+     escaping=true;
+    }
+
+  // These characters are invalid in a XML document. Just ommiting them.
+
+//    int rem = ch%16;
+//    
+//    out.append("&#").append( (ch > 15)?'1':'0' ).append( (char)(rem > 9?(rem-10+'A'):(rem+'0')) ).append(';');
+   }
+   else
+   {
+    boolean replaced = false;
+    
+    for( ReplacePair p : htmlPairs )
+    {
+     if( ch == p.getSubject() )
+     {
+      if( ! escaping )
+      {
+       out.append( s.substring(0, i) );
+       escaping=true;
+      }
+      
+      out.append( p.getReplacement() );
+      replaced = true;
+      break;
+     }
+    }
+    
+    if( ! replaced )
+    {
+     if( escaping )
+      out.append(ch);
+    }
+   }
+  }
+  
+  if( ! escaping )
+   out.append(s);
+ }
+
+ 
+ public static String removeEscapes( String str, String esc )
+ {
+  int start=0;
+  int pos = str.indexOf(esc);
+  
+  StringBuilder sb = null;
+  
+  while( pos != -1 )
+  {
+   if( sb == null )
+    sb= new StringBuilder(str.length());
+   
+   sb.append(str.substring(start,pos) );
+   
+   start = pos+esc.length();
+   
+   if( start < str.length() )
+    sb.append(str.charAt(start) );
+   else
+    break;
+   
+   start++;
+   
+   pos = str.indexOf(esc,start);
+  }
+  
+  if( sb == null )
+   return str;
+  
+  sb.append(str.substring(start));
+  
+  return sb.toString();
+ }
 }

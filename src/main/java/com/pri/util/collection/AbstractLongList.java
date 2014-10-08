@@ -7,44 +7,48 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 
-public abstract class AbstractLongList  implements LongList,Iterable 
+public abstract class AbstractLongList  implements LongList,LongIterable, Iterable<Long> 
 
 {
  protected AbstractLongList()
  {
  }
 
+ @Override
  public boolean add(long o)
  {
   add(size(), o);
   return true;
  }
 
+ @Override
  abstract public long get(int index);
 
- @SuppressWarnings("unused")
+ @Override
  public long set(int index, long element)
  {
   throw new UnsupportedOperationException();
  }
 
- @SuppressWarnings("unused")
+ @Override
  public void add(int index, long element)
  {
   throw new UnsupportedOperationException();
  }
 
- @SuppressWarnings("unused")
+ @Override
  public long removeAt(int index)
  {
   throw new UnsupportedOperationException();
  }
 
+ @Override
  public boolean isEmpty()
  {
   return size() == 0;
  }
 
+ @Override
  public int indexOf(long o)
  {
   LongListIterator e = listIterator();
@@ -56,6 +60,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return -1;
  }
 
+ @Override
  public int lastIndexOf(long o)
  {
   LongListIterator e = listIterator(size());
@@ -67,11 +72,13 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return -1;
  }
 
+ @Override
  public void clear()
  {
   removeRange(0, size());
  }
 
+ @Override
  public long[] toArray()
  {
   long[] result = new long[size()];
@@ -81,6 +88,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return result;
  }
 
+ @Override
  public boolean contains(long o)
  {
   LongListIterator e = listIterator();
@@ -91,6 +99,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return false;
  }
 
+ @Override
  public boolean addAll(int index, Collection<Long> c)
  {
   boolean modified = false;
@@ -103,16 +112,19 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return modified;
  }
 
+ @Override
  public Iterator<Long> iterator()
  {
   return new Itr();
  }
 
+ @Override
  public LongListIterator listIterator()
  {
   return listIterator(0);
  }
 
+ @Override
  public LongListIterator listIterator(final int index)
  {
   if(index < 0 || index > size())
@@ -127,11 +139,13 @@ public abstract class AbstractLongList  implements LongList,Iterable
   int lastRet          = -1;
   int expectedModCount = modCount;
 
+  @Override
   public boolean hasNext()
   {
    return cursor != size();
   }
 
+  @Override
   public Long next()
   {
    checkForComodification();
@@ -148,6 +162,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
    }
   }
 
+  @Override
   public void remove()
   {
    if(lastRet == -1)
@@ -186,11 +201,13 @@ public abstract class AbstractLongList  implements LongList,Iterable
    cursor = index;
   }
 
+  @Override
   public boolean hasPrevious()
   {
    return cursor != 0;
   }
 
+  @Override
   public long previous()
   {
    checkForComodification();
@@ -208,16 +225,19 @@ public abstract class AbstractLongList  implements LongList,Iterable
    }
   }
 
+  @Override
   public int nextIndex()
   {
    return cursor;
   }
 
+  @Override
   public int previousIndex()
   {
    return cursor - 1;
   }
 
+  @Override
   public void set(long o)
   {
    if(lastRet == -1)
@@ -235,6 +255,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
    }
   }
 
+  @Override
   public void add(long o)
   {
    checkForComodification();
@@ -251,11 +272,13 @@ public abstract class AbstractLongList  implements LongList,Iterable
    }
   }
 
+  @Override
   public boolean hasNext()
   {
    return cursor != size();
   }
 
+  @Override
   public long next()
   {
    checkForComodification();
@@ -272,6 +295,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
    }
   }
 
+  @Override
   public void remove()
   {
    if(lastRet == -1)
@@ -299,12 +323,14 @@ public abstract class AbstractLongList  implements LongList,Iterable
   }
  }
 
+ @Override
  public LongList subList(int fromIndex, int toIndex)
  {
   return (this instanceof RandomAccess ? new LongRandomAccessSubList(this, fromIndex, toIndex) : new LongSubList(this,
     fromIndex, toIndex));
  }
 
+ @Override
  public boolean equals(Object o)
  {
   if(o == this)
@@ -322,6 +348,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return !(e1.hasNext() || e2.hasNext());
  }
 
+ @Override
  public int hashCode()
  {
   long hashCode = 1;
@@ -335,6 +362,7 @@ public abstract class AbstractLongList  implements LongList,Iterable
   return (int)hashCode;
  }
 
+ @Override
  public boolean remove(long o)
  {
   LongListIterator e = listIterator();
@@ -365,8 +393,8 @@ public abstract class AbstractLongList  implements LongList,Iterable
 }
 
 class LongSubList extends AbstractLongList {
- private AbstractLongList l;
- private int offset;
+ private final AbstractLongList l;
+ private final int offset;
  private int size;
  private int expectedModCount;
 
@@ -384,23 +412,27 @@ class LongSubList extends AbstractLongList {
      expectedModCount = l.modCount;
  }
 
+ @Override
  public long set(int index, long element) {
      rangeCheck(index);
      checkForComodification();
      return l.set(index+offset, element);
  }
 
+ @Override
  public long get(int index) {
      rangeCheck(index);
      checkForComodification();
      return l.get(index+offset);
  }
 
+ @Override
  public int size() {
      checkForComodification();
      return size;
  }
 
+ @Override
  public void add(int index, long element) {
      if (index<0 || index>size)
          throw new IndexOutOfBoundsException();
@@ -411,6 +443,7 @@ class LongSubList extends AbstractLongList {
      modCount++;
  }
 
+ @Override
  public long removeAt(int index) {
      rangeCheck(index);
      checkForComodification();
@@ -421,6 +454,7 @@ class LongSubList extends AbstractLongList {
      return result;
  }
 
+ @Override
  protected void removeRange(int fromIndex, int toIndex) {
      checkForComodification();
      l.removeRange(fromIndex+offset, toIndex+offset);
@@ -433,6 +467,7 @@ class LongSubList extends AbstractLongList {
      return addAll(size, c);
  }
 
+ @Override
  public boolean addAll(int index, Collection<Long> c) {
      if (index<0 || index>size)
          throw new IndexOutOfBoundsException(
@@ -449,16 +484,19 @@ class LongSubList extends AbstractLongList {
      return true;
  }
 
+ @Override
  public Iterator<Long> iterator() {
   checkForComodification();
 
   return new Iterator<Long>() {
-      private LongListIterator i = l.listIterator(offset);
+      private final LongListIterator i = l.listIterator(offset);
 
+      @Override
       public boolean hasNext() {
           return nextIndex() < size;
       }
 
+      @Override
       public Long next() {
           if (hasNext())
               return i.next();
@@ -471,6 +509,7 @@ class LongSubList extends AbstractLongList {
           return i.nextIndex() - offset;
       }
 
+      @Override
       public void remove() {
           i.remove();
           expectedModCount = l.modCount;
@@ -481,6 +520,7 @@ class LongSubList extends AbstractLongList {
   };
  }
 
+ @Override
  public LongListIterator listIterator(final int index) {
      checkForComodification();
      if (index<0 || index>size)
@@ -488,12 +528,14 @@ class LongSubList extends AbstractLongList {
              "Index: "+index+", Size: "+size);
 
      return new LongListIterator() {
-         private LongListIterator i = l.listIterator(index+offset);
+         private final LongListIterator i = l.listIterator(index+offset);
 
+         @Override
          public boolean hasNext() {
              return nextIndex() < size;
          }
 
+         @Override
          public long next() {
              if (hasNext())
                  return i.next();
@@ -501,10 +543,12 @@ class LongSubList extends AbstractLongList {
                  throw new NoSuchElementException();
          }
 
+         @Override
          public boolean hasPrevious() {
              return previousIndex() >= 0;
          }
 
+         @Override
          public long previous() {
              if (hasPrevious())
                  return i.previous();
@@ -512,14 +556,17 @@ class LongSubList extends AbstractLongList {
                  throw new NoSuchElementException();
          }
 
+         @Override
          public int nextIndex() {
              return i.nextIndex() - offset;
          }
 
+         @Override
          public int previousIndex() {
              return i.previousIndex() - offset;
          }
 
+         @Override
          public void remove() {
              i.remove();
              expectedModCount = l.modCount;
@@ -527,10 +574,12 @@ class LongSubList extends AbstractLongList {
              modCount++;
          }
 
+         @Override
          public void set(long o) {
              i.set(o);
          }
 
+         @Override
          public void add(long o) {
              i.add(o);
              expectedModCount = l.modCount;
@@ -540,6 +589,7 @@ class LongSubList extends AbstractLongList {
      };
  }
 
+ @Override
  public LongList subList(int fromIndex, int toIndex) {
      return new LongSubList(this, fromIndex, toIndex);
  }
@@ -554,6 +604,12 @@ class LongSubList extends AbstractLongList {
      if (l.modCount != expectedModCount)
          throw new ConcurrentModificationException();
  }
+
+ @Override
+ public LongIterator longIterator()
+ {
+  return listIterator();
+ }
 }
 
 class LongRandomAccessSubList extends LongSubList implements RandomAccess {
@@ -561,6 +617,7 @@ class LongRandomAccessSubList extends LongSubList implements RandomAccess {
      super(list, fromIndex, toIndex);
  }
 
+ @Override
  public LongList subList(int fromIndex, int toIndex) {
      return new LongRandomAccessSubList(this, fromIndex, toIndex);
  }

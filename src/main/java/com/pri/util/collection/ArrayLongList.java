@@ -91,6 +91,7 @@ public class ArrayLongList extends AbstractLongList
   }
  }
 
+ @Override
  public int size()
  {
   return size;
@@ -121,6 +122,7 @@ public class ArrayLongList extends AbstractLongList
   return -1;
  }
 
+ @Override
  public Object clone()
  {
   try
@@ -138,6 +140,7 @@ public class ArrayLongList extends AbstractLongList
   }
  }
 
+ @Override
  public long[] toArray()
  {
   long[] result = new long[size];
@@ -145,6 +148,7 @@ public class ArrayLongList extends AbstractLongList
   return result;
  }
 
+ @Override
  public long get(int index)
  {
   RangeCheck(index);
@@ -152,6 +156,7 @@ public class ArrayLongList extends AbstractLongList
   return elementData[index];
  }
 
+ @Override
  public long set(int index, long element)
  {
   RangeCheck(index);
@@ -161,6 +166,7 @@ public class ArrayLongList extends AbstractLongList
   return oldValue;
  }
 
+ @Override
  public boolean add(long o)
  {
   ensureCapacity(size + 1); // Increments modCount!!
@@ -168,6 +174,7 @@ public class ArrayLongList extends AbstractLongList
   return true;
  }
 
+ @Override
  public void add(int index, long element)
  {
   if(index > size || index < 0)
@@ -179,6 +186,7 @@ public class ArrayLongList extends AbstractLongList
   size++;
  }
 
+ @Override
  public long removeAt(int index)
  {
   RangeCheck(index);
@@ -214,6 +222,7 @@ public class ArrayLongList extends AbstractLongList
    System.arraycopy(elementData, index + 1, elementData, index, numMoved);
  }
 
+ @Override
  public void clear()
  {
   modCount++;
@@ -221,6 +230,7 @@ public class ArrayLongList extends AbstractLongList
   size = 0;
  }
 
+ @Override
  protected void removeRange(int fromIndex, int toIndex)
  {
   modCount++;
@@ -254,6 +264,7 @@ public class ArrayLongList extends AbstractLongList
   }
  }
 
+ @Override
  public String toString()
  {
   StringBuilder sb = new StringBuilder();
@@ -284,5 +295,11 @@ public class ArrayLongList extends AbstractLongList
   // Read in all elements in the proper order.
   for(int i = 0; i < size; i++)
    a[i] = s.readLong();
+ }
+
+ @Override
+ public LongIterator longIterator()
+ {
+  return listIterator();
  }
 }
