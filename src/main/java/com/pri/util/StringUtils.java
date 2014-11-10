@@ -10,6 +10,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -918,6 +920,19 @@ public class StringUtils
    enc = "UTF-16";
 
   return new String(bais.toByteArray(), enc);
+ }
+ 
+ public static String readFully( InputStream is, Charset cs ) throws IOException
+ {
+  
+  ByteArrayOutputStream os = new ByteArrayOutputStream();
+  
+  StreamPump.doPump(is, os);
+  
+  if( cs == null )
+   cs=Charset.defaultCharset();
+  
+  return new String( os.toByteArray(), cs );
  }
  
  public static String millisToString( long t )
