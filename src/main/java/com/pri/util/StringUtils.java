@@ -28,64 +28,6 @@ import com.pri.util.stream.StreamPump;
  */
 public class StringUtils
 {
- public interface Output
- {
-  Output append( String str );
-
-  Output append(char c);
- }
- 
- public static class StringBuilderOutput implements Output
- {
-  private final StringBuilder sb;
-  
-  public StringBuilderOutput( StringBuilder s )
-  {
-   sb=s;
-  }
-
-  @Override
-  public Output append(String str)
-  {
-   sb.append(str);
-   
-   return this;
-  }
-
-  @Override
-  public Output append(char c)
-  {
-   sb.append(c);
-   
-   return this;
-  }
- }
- 
- public static class StringBufferOutput implements Output
- {
-  private final StringBuffer sb;
-  
-  public StringBufferOutput( StringBuffer s )
-  {
-   sb=s;
-  }
-
-  @Override
-  public Output append(String str)
-  {
-   sb.append(str);
-   
-   return this;
-  }
-
-  @Override
-  public Output append(char c)
-  {
-   sb.append(c);
-   
-   return this;
-  }
- }
 
  
  public static class ReplacePair implements Comparable<ReplacePair>
@@ -388,53 +330,56 @@ public class StringUtils
   return str;
  }
 
- 
- public static StringBuilder appendReplaced( StringBuilder sb, String str, ReplacePair[] pairs )
- {
-   int len=0;
-   if( str == null || ( len=str.length()) == 0 )
-    return sb;
-   
-   ReplacePair pair = new ReplacePair();
-   
-   for( int i=0; i < len; i++ )
-   {
-    char ch = str.charAt(i);
-    pair.setSubject(ch);
-    
-    int ind = Arrays.binarySearch( pairs, pair );
-    if( ind >= 0 )
-     sb.append(pairs[ind].getReplacement());
-    else
-     sb.append(ch);
-   }
-   
-  return sb;
- }
- 
  public static StringBuffer appendReplaced( StringBuffer sb, String str, ReplacePair[] pairs )
  {
-   int len=0;
-   if( str == null || ( len=str.length()) == 0 )
-    return sb;
-   
-   ReplacePair pair = new ReplacePair();
-   
-   for( int i=0; i < len; i++ )
-   {
-    char ch = str.charAt(i);
-    pair.setSubject(ch);
-    
-    int ind = Arrays.binarySearch( pairs, pair );
-    if( ind >= 0 )
-     sb.append(pairs[ind].getReplacement());
-    else
-     sb.append(ch);
-   }
-   
+  try
+  {
+   appendReplaced( (Appendable)sb, str, pairs );
+  }
+  catch(IOException e)
+  {
+  }
+  
   return sb;
  }
 
+ public static StringBuilder appendReplaced( StringBuilder sb, String str, ReplacePair[] pairs )
+ {
+  try
+  {
+   appendReplaced( (Appendable)sb, str, pairs );
+  }
+  catch(IOException e)
+  {
+  }
+  
+  return sb;
+ }
+
+ 
+ public static Appendable appendReplaced( Appendable sb, String str, ReplacePair[] pairs ) throws IOException
+ {
+   int len=0;
+   if( str == null || ( len=str.length()) == 0 )
+    return sb;
+   
+   ReplacePair pair = new ReplacePair();
+   
+   for( int i=0; i < len; i++ )
+   {
+    char ch = str.charAt(i);
+    pair.setSubject(ch);
+    
+    int ind = Arrays.binarySearch( pairs, pair );
+    if( ind >= 0 )
+     sb.append(pairs[ind].getReplacement());
+    else
+     sb.append(ch);
+   }
+   
+  return sb;
+ }
+ 
  
  /**
   * Adds backslashes before every char ch
@@ -442,19 +387,46 @@ public class StringUtils
  */
  public static StringBuilder appendBackslashed( StringBuilder sb, String str, char ch )
  {
-  appendEscaped( new StringBuilderOutput(sb), str, ch, '\\');
+  try
+  {
+   appendEscaped( (Appendable)sb, str, ch, '\\');
+  }
+  catch(IOException e)
+  {
+  }
 
   return sb;
  }
+ 
+
 
  public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch, char escChar )
  {
-  appendEscaped(new StringBufferOutput(sb), str, ch, escChar);
+  try
+  {
+   appendEscaped( (Appendable)sb, str, ch, escChar);
+  }
+  catch(IOException e)
+  {
+  }
   
   return sb;
  }
  
- public static Output appendEscaped( Output sb, String str, char ch, char escChar )
+ public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escCh )
+ {
+  try
+  {
+   appendEscaped( (Appendable)sb, str, ch, escCh );
+  }
+  catch(IOException e)
+  {
+  }
+  
+  return sb;
+ }
+ 
+ public static Appendable appendEscaped( Appendable sb, String str, char ch, char escChar ) throws IOException
  {
   int cPos,ePos;
   
@@ -486,46 +458,18 @@ public class StringUtils
   * Adds backslashes before every char ch
   * 
  */
- public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escCh )
- {
-  appendEscaped(new StringBuilderOutput(sb), str, ch, escCh );
-  
-  return sb;
- }
 
-// public static StringBuilder appendEscaped( StringBuilder sb, String str, char ch, char escChar )
-// {
-//  int cPos,ePos;
-//
-//  cPos=0;
-//  while( cPos < str.length() )
-//  {
-//   ePos=str.indexOf(ch,cPos);
-//    
-//   if( ePos == -1 )
-//   {
-//    if( cPos == 0)
-//     sb.append(str);
-//    else
-//     sb.append(str.substring(cPos));
-//    
-//    return sb;
-//   }
-//   
-//   sb.append(str.substring(cPos,ePos));
-//   sb.append(escChar);
-//   sb.append(ch);
-//   
-//   cPos=ePos+1;
-//  }
-// 
-//  return sb;
-// }
 
  public static StringBuilder appendAsCStr( StringBuilder sb, String str )
  {
   return appendReplaced( sb, str, cStrPairs );
  }
+ 
+ public static Appendable appendAsCStr( Appendable sb, String str ) throws IOException
+ {
+  return appendReplaced( sb, str, cStrPairs );
+ }
+
  
  public static String escapeBy( String str, char ch, char escCh )
  {
@@ -1021,12 +965,6 @@ public class StringUtils
   return sb.toString();
  }
 
- public static Output appendBackslashed(Output out, String str, char ch)
- {
-  appendEscaped( out, str, ch, '\\');
-
-  return out;
- }
  
  public static List<String> splitString( String str, char sep )
  {
