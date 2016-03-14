@@ -11,6 +11,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 public class Collections
 {
@@ -47,16 +49,19 @@ public class Collections
    return Collections.EMPTY_COLLECTION;
   }
 
+  @Override
   public int size()
   {
    return 0;
   }
 
+  @Override
   public boolean contains(Object obj)
   {
    return false;
   }
 
+  @Override
   public Object get(int index)
   {
    throw new IndexOutOfBoundsException("Index: " + index);
@@ -74,6 +79,12 @@ public class Collections
    return EmptyIterator.getInstance();
   }
 
+  @Override
+  public Spliterator<Object> spliterator()
+  {
+   return Spliterators.emptySpliterator();
+  }
+  
   @Override
   public Object[] toArray()
   {

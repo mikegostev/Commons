@@ -109,6 +109,14 @@ public class StringUtils
   new ReplacePair('\n',"\\n"),
   new ReplacePair('\r',"\\r")
   };
+ 
+ static final ReplacePair[] jsonPairs = { 
+  new ReplacePair('"',"\\\""),
+  new ReplacePair('\\',"\\\\"),
+  new ReplacePair('\0',"\\0"),
+  new ReplacePair('\n',"\\n"),
+  new ReplacePair('\r',"\\r")
+  };
 
  
 // static final CharPair[] escPairs = { 
@@ -132,6 +140,7 @@ public class StringUtils
  {
   Arrays.sort( htmlPairs );
   Arrays.sort( cStrPairs );
+  Arrays.sort( jsonPairs );
  }
  /**
   * 
@@ -400,6 +409,10 @@ public class StringUtils
   return sb;
  }
  
+ public static String escapeCStr(String str )
+ {
+  return replace(str, cStrPairs);
+ }
 
 
  public static StringBuffer appendEscaped( StringBuffer sb, String str, char ch, char escChar )
@@ -423,6 +436,32 @@ public class StringUtils
   }
   catch(IOException e)
   {
+  }
+  
+  return sb;
+ }
+ 
+
+ public static Appendable appendEscaped( Appendable sb, String str, char[] chs, char escChar ) throws IOException
+ {
+  int len = str.length();
+  int esclen = chs.length;
+ 
+  for( int i=0; i < len; i++ )
+  {
+   char c = str.charAt(i);
+   
+   for( int j=0; j < esclen; j++ )
+   {
+    if( c == chs[j] )
+    {
+     sb.append(escChar);
+     break;
+    }
+   }
+
+   sb.append(c);
+   
   }
   
   return sb;
@@ -470,6 +509,11 @@ public class StringUtils
  public static Appendable appendAsCStr( Appendable sb, String str ) throws IOException
  {
   return appendReplaced( sb, str, cStrPairs );
+ }
+
+ public static Appendable appendAsJSONStr( Appendable sb, String str ) throws IOException
+ {
+  return appendReplaced( sb, str, jsonPairs );
  }
 
  
@@ -756,7 +800,7 @@ public class StringUtils
   return replace(s, htmlPairs);
  }
  
- public static void splitExcelString(String line, String sep, List<String> accum)
+ public static boolean splitExcelString(String line, String sep, List<String> accum)
  {
   int spos;
   StringBuilder sb=null;
@@ -771,7 +815,7 @@ public class StringUtils
     if( spos < 0 )
     {
      accum.add(line);
-     return;
+     return true;
     }
     
     accum.add(line.substring(0,spos));
@@ -796,7 +840,7 @@ public class StringUtils
       else
        accum.add(line.substring(beg));
       
-      return;
+      return false;
      }
      else if( qpos == line.length()-1 )
      {
@@ -808,7 +852,7 @@ public class StringUtils
       else
        accum.add(line.substring(beg,line.length()-1));
 
-      return;
+      return true;
      }
      
      if( line.charAt(qpos+1) == '"' ) // We have found a double quote
@@ -842,12 +886,16 @@ public class StringUtils
        
        sb.append(line.substring(beg, qpos+1));
        beg = qpos+1;
+       
+       return false;
       }
      }
      
     }
    }
   }
+ 
+  return true;
  }
 
  
@@ -1015,6 +1063,69 @@ public class StringUtils
   return res;
  }
  
+ public static List<String> splitEscapedString( String str, char sep, char esc, int maxPart )
+ {
+  List<String> res = new ArrayList<String>();
+  
+  if( maxPart == 1 )
+  {
+   res.add(str);
+   return res;
+  }
+  
+  int ptr = 0;
+  int beg = 0;
+  int len = str.length();
+  
+  while( true )
+  {
+   if( beg == len )
+   {
+    res.add("");
+    break;
+   }
+   
+   int pos = str.indexOf( sep, ptr );
+   
+   if( pos == -1 )
+   {
+    if( res.size() == 0 )
+     res.add(str);
+    else
+     res.add( str.substring(beg) );
+   
+    break;
+   }
+   
+   int nEcs=0;
+   for( int i=pos-1; i >=0; i-- )
+   {
+    if( str.charAt(i) == esc )
+     nEcs++;
+    else
+     break;
+   }
+   
+   if( nEcs % 2 == 0 ) // even number of escapes
+   {
+    res.add( str.substring(beg,pos) );
+
+    if( maxPart > 0 && res.size() == maxPart-1)
+    {
+     res.add( pos+1 < len?str.substring(pos+1):"" );
+     break;
+    }
+    
+    beg = pos+1;
+   }
+
+   ptr = pos+1;
+   
+  }
+  
+  return res;
+ }
+ 
  public static void xmlEscaped( String s, Appendable out ) throws IOException
  {
   if( s == null )
@@ -1076,6 +1187,40 @@ public class StringUtils
  }
 
  
+ public static String removeEscapes( String str, char esc )
+ {
+  int start=0;
+  int pos = str.indexOf(esc);
+  
+  StringBuilder sb = null;
+  
+  while( pos != -1 )
+  {
+   if( sb == null )
+    sb= new StringBuilder(str.length());
+   
+   sb.append(str.substring(start,pos) );
+   
+   start = pos+1;
+   
+   if( start < str.length() )
+    sb.append(str.charAt(start) );
+   else
+    break;
+   
+   start++;
+   
+   pos = str.indexOf(esc,start);
+  }
+  
+  if( sb == null )
+   return str;
+  
+  sb.append(str.substring(start));
+  
+  return sb.toString();
+ }
+ 
  public static String removeEscapes( String str, String esc )
  {
   int start=0;
@@ -1108,5 +1253,29 @@ public class StringUtils
   sb.append(str.substring(start));
   
   return sb.toString();
+ }
+ 
+ public static String stripLeadingSlashes( String str )
+ {
+  int l=str.length();
+  int n=0;
+  
+  while( n < l )
+  { 
+   char ch = str.charAt(n);
+   
+   if( ch != '/' && ch != '\\' )
+    break;
+   
+   n++;
+  }
+  
+  if( n == 0 )
+   return str;
+  
+  if( n == l )
+   return "";
+  
+  return str.substring(n);
  }
 }
