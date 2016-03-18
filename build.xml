@@ -39,29 +39,12 @@
 
  <target name="deps" description="download dependences jars" >
 
- 	<artifact:dependencies filesetId="dependency.fileset">
- 	  <dependency groupId="commons-logging" artifactId="commons-logging" version="[1.1.0,)" />
- 	</artifact:dependencies>
-
- 	<artifact:dependencies filesetId="build.fileset">
-
- 	 	
- 		<dependency
- 			groupId="javax.servlet"
- 			artifactId="servlet-api"
- 			version="2.5" scope="provided"
- 		/>
-	</artifact:dependencies>
-
+	<artifact:pom id="pom" file="pom.xml" />
+	<artifact:dependencies filesetId="deps" pomRefId="pom" />
+ 	
  	
  	<copy todir="buildlib">
- 	  <fileset refid="build.fileset" />
- 	  <!-- This mapper strips off all leading directory information -->
- 	  <mapper type="flatten" />
- 	</copy>
-
- 	<copy todir="lib">
- 	  <fileset refid="dependency.fileset" />
+ 	  <fileset refid="deps" />
  	  <!-- This mapper strips off all leading directory information -->
  	  <mapper type="flatten" />
  	</copy>
