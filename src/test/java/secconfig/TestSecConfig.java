@@ -24,7 +24,7 @@ public class TestSecConfig
    System.out.println("\nSection: "+(sec.getName()==null?"<default>":sec.getName())+"\n\n");
    
    for( Var v : sec.getVariables() )
-    System.out.println(v.getName()+" + "+v.getValue() );
+    System.out.println("'"+v.getName()+"' = '"+v.getValue()+"'" );
    
   }
   

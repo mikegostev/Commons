@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 public class SecConfig
 {
  private static Pattern secPtt = Pattern.compile("\\s*\\[\\s*(.*)\\s*\\]\\s*");
- private static Pattern valPtt = Pattern.compile("\\s*(.*)\\s*=\\s*(.*)\\s*");
+ private static Pattern valPtt = Pattern.compile("\\s*([^\\[][^=]*(?<=\\S))\\s*(?:=\\s*(.*\\S)\\s*)?");
  private static Pattern commPtt = Pattern.compile("\\s*#.*");
  
  private Map< String, Section > conf = new LinkedHashMap<String, Section>();
