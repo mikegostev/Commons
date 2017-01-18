@@ -933,6 +933,27 @@ public class StringUtils
   return passhash.toString();
  }
  
+ public static String toHexStr( byte[] dgst )
+ {
+  if( dgst == null )
+   return "";
+  
+  StringBuilder sb = new StringBuilder();
+  
+  for( byte b : dgst )
+  {
+   int hxd = ( b >> 4 ) & 0x0F;
+   
+   sb.append( (char)(hxd >=10 ? ('A'+(hxd-10) ):('0'+hxd)) );
+   
+   hxd =  b & 0x0F;
+   
+   sb.append( (char)(hxd >=10 ? ('A'+(hxd-10) ):('0'+hxd)) );
+  }
+  
+  return sb.toString();
+ }
+ 
  public static int compareStrings( String s1, String s2 )
  {
   if( s1 == null )

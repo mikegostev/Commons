@@ -14,8 +14,10 @@ public class SecConfig
  private static Pattern secPtt = Pattern.compile("\\s*\\[\\s*(.*)\\s*\\]\\s*");
  private static Pattern valPtt = Pattern.compile("\\s*([^\\[][^=]*(?<=\\S))\\s*(?:=\\s*(.*\\S)\\s*)?");
  private static Pattern commPtt = Pattern.compile("\\s*#.*");
+ private static Pattern sepPtt = Pattern.compile("\\s+");
  
  private Map< String, Section > conf = new LinkedHashMap<String, Section>();
+ private Section defSection;
  
  public void read( Reader rd ) throws IOException, ConfigException
  {
@@ -57,12 +59,18 @@ public class SecConfig
     String varName = varM.group(1);
     String varVal  = varM.group(2);
     
+    String[] parts = sepPtt.split(varName);
+    
+    if( parts.length > 1 )
+     varName = String.join(" ", parts);
+    
     Var exVar = null;
     
     if( csec == null )
     {
      csec = new Section(null);
      conf.put(null, csec);
+     defSection = csec;
     }
     else
      exVar = csec.getVariable(varName);
@@ -100,6 +108,47 @@ public class SecConfig
   
  }
 
+ public String getValue( String nm )
+ {
+  if( defSection == null )
+   return null;
+  
+  Var v = defSection.getVariable(nm);
+  
+  if( v == null )
+   return null;
+  
+  return v.getValue();
+ }
+ 
+ public void resetVariable( String varNameVal ) throws  ConfigException
+ {
+  Matcher varM = valPtt.matcher(varNameVal);
+  
+  if( varM.matches() )
+   resetVariable(varM.group(1),varM.group(2));
+  else
+   throw new ConfigException("Line '"+varNameVal+"': invalid syntax");
+ }
+
+ public void resetVariable( String varName, String val )
+ {
+  String[] parts = sepPtt.split(varName);
+  
+  if( parts.length > 1 )
+   varName = String.join(" ", parts);
+  
+  Section dfSec = conf.get(null);
+  
+  if( dfSec == null )
+  {
+   dfSec = new Section(null);
+   conf.put(null, dfSec);
+  }
+  
+  dfSec.addVariable(new Var(varName,val));
+ }
+ 
  public Section getSection( String nm )
  {
   return conf.get(nm);

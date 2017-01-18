@@ -1,6 +1,7 @@
 package com.pri.secfg;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Var
@@ -18,8 +19,11 @@ public class Var
  public void addValue(String varVal)
  {
   if( values == null )
+  {
    values = new ArrayList<String>(5);
- 
+   values.add(value);
+  }
+  
   values.add(varVal);
   value = varVal;
  }
@@ -36,6 +40,17 @@ public class Var
 
  public List<String> getValues()
  {
+  if( values == null )
+   return Collections.singletonList(value);
+  
   return values;
+ }
+
+ public int getValuesCount()
+ {
+  if( values == null )
+   return 1;
+  
+  return values.size();
  }
 }

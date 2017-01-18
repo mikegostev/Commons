@@ -18,14 +18,24 @@ public class TestSecConfig
   
   cfg.read( new FileReader("/dev/tmp/test.config") );
   
+  for( String s : args )
+   cfg.resetVariable(s);
   
   for( Section sec : cfg.getSections() )
   {
    System.out.println("\nSection: "+(sec.getName()==null?"<default>":sec.getName())+"\n\n");
    
    for( Var v : sec.getVariables() )
-    System.out.println("'"+v.getName()+"' = '"+v.getValue()+"'" );
-   
+   {
+    String val = v.getValue();
+    
+    if( v.getValuesCount() > 1 )
+    {
+     val = "["+String.join(",", v.getValues())+"]";
+    }
+    
+    System.out.println("'"+v.getName()+"' = '"+val+"'" );
+   }
   }
   
   System.out.println();
