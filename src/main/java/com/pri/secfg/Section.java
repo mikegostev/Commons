@@ -42,5 +42,15 @@ public class Section
  {
   this.name = name;
  }
+
+ public String getValue(String string)
+ {
+  Var v = getVariable(string);
+  
+  if( v != null )
+   return v.getValue();
+  
+  return null;
+ }
  
 }
