@@ -3,20 +3,21 @@ package com.pri.secfg;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SecConfig
+public class SecConfig implements VarSet
 {
  private static Pattern secPtt = Pattern.compile("\\s*\\[\\s*(.*)\\s*\\]\\s*");
  private static Pattern valPtt = Pattern.compile("\\s*([^\\[][^=]*(?<=\\S))\\s*(?:=\\s*(.*\\S)\\s*)?");
  private static Pattern commPtt = Pattern.compile("\\s*#.*");
  private static Pattern sepPtt = Pattern.compile("\\s+");
  
- private Map< String, Section > conf = new LinkedHashMap<String, Section>();
+ private List<Section> conf = new ArrayList<Section>();
+// private Map< String, Section > conf = new LinkedHashMap<String, Section>();
  private Section defSection;
  
  public void read( Reader rd ) throws IOException, ConfigException
@@ -69,7 +70,7 @@ public class SecConfig
     if( csec == null )
     {
      csec = new Section(null);
-     conf.put(null, csec);
+//     conf.add(csec);
      defSection = csec;
     }
     else
@@ -77,11 +78,11 @@ public class SecConfig
     
     if( exVar == null )
     {
-     exVar = new Var(varName,varVal);
+     exVar = new Var(varName,varVal, ln);
      csec.addVariable(exVar);
     }
     else
-     exVar.addValue(varVal);
+     exVar.addValue(varVal,ln);
    
     continue;
    }
@@ -92,12 +93,12 @@ public class SecConfig
    {
     String secName = secM.group(1);
     
-    if( conf.containsKey(secName) )
-     throw new ConfigException("Line "+ln+": section exists");
+//    if( conf.containsKey(secName) )
+//     throw new ConfigException("Line "+ln+": section exists");
     
     csec = new Section(secName);
     
-    conf.put(secName, csec);
+    conf.add(csec);
     
     continue;
    }
@@ -108,18 +109,7 @@ public class SecConfig
   
  }
 
- public String getValue( String nm )
- {
-  if( defSection == null )
-   return null;
-  
-  Var v = defSection.getVariable(nm);
-  
-  if( v == null )
-   return null;
-  
-  return v.getValue();
- }
+
  
  public void resetVariable( String varNameVal ) throws  ConfigException
  {
@@ -138,24 +128,70 @@ public class SecConfig
   if( parts.length > 1 )
    varName = String.join(" ", parts);
   
-  Section dfSec = conf.get(null);
+  if( defSection == null )
+   defSection = new Section(null);
   
-  if( dfSec == null )
-  {
-   dfSec = new Section(null);
-   conf.put(null, dfSec);
-  }
-  
-  dfSec.addVariable(new Var(varName,val));
+  defSection.addVariable(new Var(varName,val,0));
  }
  
  public Section getSection( String nm )
  {
-  return conf.get(nm);
+  for( Section s : conf)
+   if(nm.equals(s.getName()))
+    return s;
+  
+  return null;
  }
  
  public Collection<Section> getSections()
  {
-  return conf.values();
+  return conf;
+ }
+
+ @Override
+ public Var getVariable(String n)
+ {
+  if( defSection == null )
+   return null;
+
+  return defSection.getVariable(n);
+ }
+
+ @Override
+ public Collection<Var> getVariables()
+ {
+  if( defSection == null )
+   return null;
+  
+  return defSection.getVariables();
+ }
+ 
+ public String getStringValue( String nm )
+ {
+  if( defSection == null )
+   return null;
+  
+  Var v = defSection.getVariable(nm);
+  
+  if( v == null )
+   return null;
+  
+  return v.getStringValue();
+ }
+
+
+
+ @Override
+ public Value getValue(String nm)
+ {
+  if( defSection == null )
+   return null;
+  
+  Var v = defSection.getVariable(nm);
+  
+  if( v == null )
+   return null;
+  
+  return v.getValue();
  }
 }

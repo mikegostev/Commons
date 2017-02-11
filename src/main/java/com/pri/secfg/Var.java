@@ -7,25 +7,27 @@ import java.util.List;
 public class Var
 {
  private String name;
- String value;
- List<String> values;
+ Value value;
+ List<Value> values;
 
- public Var(String varName, String varVal)
+ public Var(String varName, String varVal, int ln)
  {
   name = varName;
-  value = varVal;
+  value = new Value(varVal,ln);
  }
  
- public void addValue(String varVal)
+ public void addValue(String varVal, int ln)
  {
   if( values == null )
   {
-   values = new ArrayList<String>(5);
+   values = new ArrayList<Value>(5);
    values.add(value);
   }
   
-  values.add(varVal);
-  value = varVal;
+  Value nv = new Value(varVal,ln);
+  
+  values.add(nv);
+  value = nv;
  }
 
  public String getName()
@@ -33,12 +35,20 @@ public class Var
   return name;
  }
 
- public String getValue()
+ public Value getValue()
  {
   return value;
  }
+ 
+ public String getStringValue()
+ {
+  if( value != null )
+   return value.getStringValue();
+  
+  return null;
+ }
 
- public List<String> getValues()
+ public List<Value> getValues()
  {
   if( values == null )
    return Collections.singletonList(value);
