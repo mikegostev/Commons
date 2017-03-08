@@ -7,6 +7,7 @@ import java.io.IOException;
 import com.pri.secfg.ConfigException;
 import com.pri.secfg.SecConfig;
 import com.pri.secfg.Section;
+import com.pri.secfg.Value;
 import com.pri.secfg.Var;
 
 public class TestSecConfig
@@ -27,11 +28,20 @@ public class TestSecConfig
    
    for( Var v : sec.getVariables() )
    {
-    String val = v.getValue();
+    String val = v.getStringValue();
     
+    
+
     if( v.getValuesCount() > 1 )
     {
-     val = "["+String.join(",", v.getValues())+"]";
+     StringBuilder sb  = new StringBuilder(); 
+     
+     sb.append("[");
+     
+     for( Value vl:  v.getValues() )
+      sb.append(vl.getStringValue()).append(",");
+     
+     sb.setCharAt(sb.length()-1, ']');
     }
     
     System.out.println("'"+v.getName()+"' = '"+val+"'" );
