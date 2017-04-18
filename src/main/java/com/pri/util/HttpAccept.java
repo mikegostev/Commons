@@ -97,7 +97,7 @@ public class HttpAccept
    {
     Entry e = entries.get(j);
     
-    if( ( mjr.equalsIgnoreCase(e.major) || e.major.equals("*") ) && ( mnr.equalsIgnoreCase(e.minor) || e.minor.equals("*") ) )
+    if( ( mjr.equalsIgnoreCase(e.major) || e.major.equals("*") ) && ( e.minor == null || mnr.equalsIgnoreCase(e.minor) || e.minor.equals("*") ) )
     {
      ind = i;
      match=j;
