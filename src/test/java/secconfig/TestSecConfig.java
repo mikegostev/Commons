@@ -34,14 +34,15 @@ public class TestSecConfig
 
     if( v.getValuesCount() > 1 )
     {
-     StringBuilder sb  = new StringBuilder(); 
+     StringBuilder sb = new StringBuilder();
+     sb.append('[');
      
-     sb.append("[");
-     
-     for( Value vl:  v.getValues() )
+     for( Value vl : v.getValues() )
       sb.append(vl.getStringValue()).append(",");
      
      sb.setCharAt(sb.length()-1, ']');
+     
+     val = sb.toString();
     }
     
     System.out.println("'"+v.getName()+"' = '"+val+"'" );
