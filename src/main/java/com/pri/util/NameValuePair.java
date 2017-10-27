@@ -10,46 +10,39 @@ package com.pri.util;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class NameValuePair extends StringPair
-{
+public class NameValuePair extends StringPair {
 
- /**
-  * 
-  */
- public NameValuePair()
- {
-  super();
- }
+    /**
+     *
+     */
+    public NameValuePair() {
+        super();
+    }
 
- /**
-  * @param s1
-  * @param s2
-  */
- public NameValuePair(String s1, String s2)
- {
-  super(s1, s2);
- }
+    /**
+     * @param s1
+     * @param s2
+     */
+    public NameValuePair(String s1, String s2) {
+        super(s1, s2);
+    }
 
-  public String getName()
-  {
-   return getFirst();
-  }
+    public String getName() {
+        return getFirst();
+    }
 
-  public String getValue()
-  {
-   return getSecond();
-  }
+    public String getValue() {
+        return getSecond();
+    }
 
-  public void setName( String str )
-  {
-   setFirst( str );
-  }
+    public void setName(String str) {
+        setFirst(str);
+    }
 
-  public void setValue( String str )
-  {
-   setSecond( str );
-  }
+    public void setValue(String str) {
+        setSecond(str);
+    }
 }

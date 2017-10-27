@@ -5,44 +5,38 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 
-public abstract class DataObject<T extends DataObject> implements Serializable
-{
- 
- protected Map<String,Object> map = new TreeMap<String,Object>( );
- 
- public Object getFieldValue( Field key )
- {
-  return map.get(key.getName());
- }
+public abstract class DataObject<T extends DataObject> implements Serializable {
 
- public Object getFieldValue( String key )
- {
-  return map.get(key);
- }
+    protected Map<String, Object> map = new TreeMap<String, Object>();
 
- public void setFieldValue( Field key, Object val )
- {
-  map.put(key.getName(),val);
- }
- 
- public boolean isSet( Field key )
- {
-  return map.containsKey(key.getName());
- }
- 
- public void clear()
- {
-  map.clear();
- }
+    public Object getFieldValue(Field key) {
+        return map.get(key.getName());
+    }
 
- abstract public Field getIDField( );
+    public Object getFieldValue(String key) {
+        return map.get(key);
+    }
 
- abstract public Field getField( String name );
- 
- abstract public String getTypeName();
+    public void setFieldValue(Field key, Object val) {
+        map.put(key.getName(), val);
+    }
 
- abstract public Collection<Field> getFields();
- 
- abstract public T newInstance();
- 
+    public boolean isSet(Field key) {
+        return map.containsKey(key.getName());
+    }
+
+    public void clear() {
+        map.clear();
+    }
+
+    abstract public Field getIDField();
+
+    abstract public Field getField(String name);
+
+    abstract public String getTypeName();
+
+    abstract public Collection<Field> getFields();
+
+    abstract public T newInstance();
+
 }

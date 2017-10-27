@@ -1,9 +1,7 @@
 package uk.ac.ebi.mg.reflectcall;
 
 
+public interface FormatterFactory {
 
-public interface FormatterFactory
-{
- 
- OutputFormatter getFormatter( Class< ? > cls );
+    OutputFormatter getFormatter(Class<?> cls);
 }

@@ -8,7 +8,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import uk.ac.ebi.mg.reflectcall.converter.ArrayConverter;
 import uk.ac.ebi.mg.reflectcall.converter.BeanObjectConverter;
 import uk.ac.ebi.mg.reflectcall.converter.CollectionConverter;
@@ -17,111 +16,114 @@ import uk.ac.ebi.mg.reflectcall.converter.FabMethodConverter;
 import uk.ac.ebi.mg.reflectcall.converter.PrimitiveTypeConverter;
 import uk.ac.ebi.mg.reflectcall.converter.StringConverter;
 
-public class StandardConverterFactory implements ConverterFactory
-{
- private static StandardConverterFactory instance;
- private static Map<Class<?>, String2ValueConverter> standardConv = new HashMap<Class<?>, String2ValueConverter>();
+public class StandardConverterFactory implements ConverterFactory {
 
- public static StandardConverterFactory getInstance()
- {
-  if( instance == null )
-   instance = new StandardConverterFactory();
-  
-  return instance;
- }
+    private static StandardConverterFactory instance;
+    private static Map<Class<?>, String2ValueConverter> standardConv = new HashMap<Class<?>, String2ValueConverter>();
 
- private Map<Class<?>, String2ValueConverter> customConv;
- 
- public StandardConverterFactory()
- {
- }
+    public static StandardConverterFactory getInstance() {
+        if (instance == null) {
+            instance = new StandardConverterFactory();
+        }
 
- public StandardConverterFactory( Map<Class<?>, String2ValueConverter> cMap )
- {
-  customConv = cMap;
- }
- 
- @Override
- public String2ValueConverter getConverter(Type typ, String value)
- {
-  if(typ == String.class)
-   return StringConverter.getInstance();
+        return instance;
+    }
 
-  Class< ? > cls = null;
+    private Map<Class<?>, String2ValueConverter> customConv;
 
-  if(typ instanceof Class)
-   cls = (Class< ? >) typ;
-  else if(typ instanceof ParameterizedType)
-   cls = (Class< ? >) ((ParameterizedType) typ).getRawType();
+    public StandardConverterFactory() {
+    }
 
-  String2ValueConverter conv = null;
+    public StandardConverterFactory(Map<Class<?>, String2ValueConverter> cMap) {
+        customConv = cMap;
+    }
 
-  if(customConv != null)
-   conv = customConv.get(cls);
+    @Override
+    public String2ValueConverter getConverter(Type typ, String value) {
+        if (typ == String.class) {
+            return StringConverter.getInstance();
+        }
 
-  if(conv == null)
-   conv = standardConv.get(cls);
+        Class<?> cls = null;
 
-  if(conv == null && cls.isPrimitive())
-   conv = PrimitiveTypeConverter.getInstance();
+        if (typ instanceof Class) {
+            cls = (Class<?>) typ;
+        } else if (typ instanceof ParameterizedType) {
+            cls = (Class<?>) ((ParameterizedType) typ).getRawType();
+        }
 
-  if(conv == null && cls.isArray())
-   conv = new ArrayConverter(this);
+        String2ValueConverter conv = null;
 
-  if(Collection.class.isAssignableFrom(cls))
-   conv = new CollectionConverter(this);
+        if (customConv != null) {
+            conv = customConv.get(cls);
+        }
 
-  if(conv != null)
-   return conv;
+        if (conv == null) {
+            conv = standardConv.get(cls);
+        }
 
-  //   {
-  //    try
-  //    {
-  //     params[i] = conv.convert(input[i+1], cls);
-  //     continue;
-  //    }
-  //    catch(ConvertionException e)
-  //    {
-  //     throw new ArgumentConversionException("Argument #"+i+" conversion error. Target class: "+cls.getName()+". "+e.getMessage(), i);
-  //    }
-  //   }
+        if (conv == null && cls.isPrimitive()) {
+            conv = PrimitiveTypeConverter.getInstance();
+        }
 
-  if(!value.startsWith(bracketOverridePrefix) && value.charAt(value.length() - 1) == hashBrackets.charAt(1) && value.length() > 2
-    && value.charAt(0) == hashBrackets.charAt(0))
-   return new BeanObjectConverter(this);
+        if (conv == null && cls.isArray()) {
+            conv = new ArrayConverter(this);
+        }
 
-  Method fabMeth = null;
+        if (Collection.class.isAssignableFrom(cls)) {
+            conv = new CollectionConverter(this);
+        }
 
-  try
-  {
-   fabMeth = cls.getMethod(fabricMethodName, String.class);
+        if (conv != null) {
+            return conv;
+        }
 
-   if(!Modifier.isStatic(fabMeth.getModifiers()) || !cls.isAssignableFrom(fabMeth.getReturnType()))
-    fabMeth = null;
-  }
-  catch(Exception e1)
-  {
-  }
+        //   {
+        //    try
+        //    {
+        //     params[i] = conv.convert(input[i+1], cls);
+        //     continue;
+        //    }
+        //    catch(ConvertionException e)
+        //    {
+        //     throw new ArgumentConversionException("Argument #"+i+" conversion error. Target class: "+cls.getName()
+        // +". "+e.getMessage(), i);
+        //    }
+        //   }
 
-  if(fabMeth != null)
-   return new FabMethodConverter(fabMeth);
+        if (!value.startsWith(bracketOverridePrefix) && value.charAt(value.length() - 1) == hashBrackets.charAt(1)
+                && value.length() > 2 && value.charAt(0) == hashBrackets.charAt(0)) {
+            return new BeanObjectConverter(this);
+        }
 
-  Constructor< ? > ctor = null;
+        Method fabMeth = null;
 
-  try
-  {
-   ctor = cls.getConstructor(String.class);
-  }
-  catch(Exception e)
-  {
-  }
+        try {
+            fabMeth = cls.getMethod(fabricMethodName, String.class);
 
-  if(ctor != null)
-   return new ConstructorConverter(ctor);
+            if (!Modifier.isStatic(fabMeth.getModifiers()) || !cls.isAssignableFrom(fabMeth.getReturnType())) {
+                fabMeth = null;
+            }
+        } catch (Exception e1) {
+        }
 
-  return null;
- }
+        if (fabMeth != null) {
+            return new FabMethodConverter(fabMeth);
+        }
 
- 
- 
+        Constructor<?> ctor = null;
+
+        try {
+            ctor = cls.getConstructor(String.class);
+        } catch (Exception e) {
+        }
+
+        if (ctor != null) {
+            return new ConstructorConverter(ctor);
+        }
+
+        return null;
+    }
+
+
 }

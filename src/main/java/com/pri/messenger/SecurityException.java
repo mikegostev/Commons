@@ -10,28 +10,25 @@ package com.pri.messenger;
 /**
  * @author Mike
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class SecurityException extends MessageDeliveryException
-{
+public class SecurityException extends MessageDeliveryException {
 
- /**
-  * 
-  */
- public SecurityException()
- {
-  super();
-  // TODO Auto-generated constructor stub
- }
+    /**
+     *
+     */
+    public SecurityException() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
 
- /**
-  * @param msg
-  */
- public SecurityException(String msg)
- {
-  super(msg);
-  // TODO Auto-generated constructor stub
- }
+    /**
+     * @param msg
+     */
+    public SecurityException(String msg) {
+        super(msg);
+        // TODO Auto-generated constructor stub
+    }
 
 }

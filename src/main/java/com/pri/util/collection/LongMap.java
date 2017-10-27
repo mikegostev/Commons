@@ -5,49 +5,49 @@ import java.util.Map;
 import java.util.Set;
 
 
-public interface LongMap<V>
-{
- int size();
+public interface LongMap<V> {
 
- boolean isEmpty();
+    int size();
 
- boolean containsKey(long key);
+    boolean isEmpty();
 
- boolean containsValue(Object value);
+    boolean containsKey(long key);
 
- V get(long key);
+    boolean containsValue(Object value);
 
- V put(long key, V value);
+    V get(long key);
 
- V remove(long key);
+    V put(long key, V value);
 
- void putAll(Map<Long, ? extends V> t);
+    V remove(long key);
 
- void putAll(LongMap< ? extends V> t);
+    void putAll(Map<Long, ? extends V> t);
 
- void clear();
+    void putAll(LongMap<? extends V> t);
 
- Set<Long> keySet();
+    void clear();
 
- Collection<V> values();
+    Set<Long> keySet();
 
- Set<LongMap.Entry<V>> entrySet();
+    Collection<V> values();
 
- boolean equals(Object o);
+    Set<LongMap.Entry<V>> entrySet();
 
- int hashCode();
+    boolean equals(Object o);
 
- interface Entry<VL>
- {
-  long getKey();
+    int hashCode();
 
-  VL getValue();
+    interface Entry<VL> {
 
-  VL setValue(VL value);
+        long getKey();
 
-  boolean equals(Object o);
+        VL getValue();
 
-  int hashCode();
- }
+        VL setValue(VL value);
+
+        boolean equals(Object o);
+
+        int hashCode();
+    }
 
 }

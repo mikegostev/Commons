@@ -6,5 +6,5 @@ package com.pri.messenger;
 public interface MessageBody //extends XMLable
 {
 
- 
+
 }

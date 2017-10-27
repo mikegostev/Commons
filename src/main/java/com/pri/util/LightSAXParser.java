@@ -12,15 +12,15 @@ import org.xml.sax.Attributes;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public interface LightSAXParser
-{
- public void startElement(String uri, String localName, String qName, Attributes attributes);
- 
- public void characters(char[] ch, int start, int length);
+public interface LightSAXParser {
 
- public void endElement(String namespaceURI, String localName, String qName);
+    public void startElement(String uri, String localName, String qName, Attributes attributes);
+
+    public void characters(char[] ch, int start, int length);
+
+    public void endElement(String namespaceURI, String localName, String qName);
 
 }

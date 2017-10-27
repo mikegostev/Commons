@@ -9,20 +9,17 @@ package com.pri.session;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class UnableGenerateSessionKeyException extends Exception
-{
+public class UnableGenerateSessionKeyException extends Exception {
 
- public UnableGenerateSessionKeyException()
- {
-  super();
- }
+    public UnableGenerateSessionKeyException() {
+        super();
+    }
 
- public UnableGenerateSessionKeyException(String mess)
- {
-  super(mess);
- }
+    public UnableGenerateSessionKeyException(String mess) {
+        super(mess);
+    }
 
 }

@@ -1,57 +1,56 @@
 package com.pri.util.collection;
 
-public interface LongSet extends LongCollection
-{
- // Query Operations
+public interface LongSet extends LongCollection {
+    // Query Operations
 
- @Override
- int size();
+    @Override
+    int size();
 
- @Override
- boolean isEmpty();
+    @Override
+    boolean isEmpty();
 
- @Override
- boolean contains(long o);
+    @Override
+    boolean contains(long o);
 
- @Override
- LongIterator longIterator();
+    @Override
+    LongIterator longIterator();
 
- @Override
- long[] toArray();
+    @Override
+    long[] toArray();
 
- @Override
- long[] toArray(long[] a);
+    @Override
+    long[] toArray(long[] a);
 
- // Modification Operations
+    // Modification Operations
 
- @Override
- boolean add(long e);
+    @Override
+    boolean add(long e);
 
- @Override
- boolean remove(long o);
+    @Override
+    boolean remove(long o);
 
- // Bulk Operations
+    // Bulk Operations
 
- @Override
- boolean containsAll(LongCollection c);
+    @Override
+    boolean containsAll(LongCollection c);
 
- @Override
- boolean addAll(LongCollection c);
+    @Override
+    boolean addAll(LongCollection c);
 
- @Override
- boolean retainAll(LongCollection c);
+    @Override
+    boolean retainAll(LongCollection c);
 
- @Override
- boolean removeAll(LongCollection c);
+    @Override
+    boolean removeAll(LongCollection c);
 
- @Override
- void clear();
+    @Override
+    void clear();
 
- // Comparison and hashing
+    // Comparison and hashing
 
- @Override
- boolean equals(Object o);
+    @Override
+    boolean equals(Object o);
 
- @Override
- int hashCode();
+    @Override
+    int hashCode();
 }

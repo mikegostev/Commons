@@ -12,44 +12,41 @@ import java.util.Iterator;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class ArrayIterator implements Iterator
-{
- private Object[] array;
- private int pos;
- /**
-  * 
-  */
- public ArrayIterator( Object[] ar )
- {
-  super();
-  array=ar;
-  pos=0;
- }
+public class ArrayIterator implements Iterator {
 
- /* (non-Javadoc)
-  * @see java.util.Iterator#remove()
-  */
- public void remove()
- {
- }
+    private Object[] array;
+    private int pos;
 
- /* (non-Javadoc)
-  * @see java.util.Iterator#hasNext()
-  */
- public boolean hasNext()
- {
-  return array != null && pos < array.length;
- }
+    /**
+     *
+     */
+    public ArrayIterator(Object[] ar) {
+        super();
+        array = ar;
+        pos = 0;
+    }
 
- /* (non-Javadoc)
-  * @see java.util.Iterator#next()
-  */
- public Object next()
- {
-  return array[pos++];
- }
+    /* (non-Javadoc)
+     * @see java.util.Iterator#remove()
+     */
+    public void remove() {
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Iterator#hasNext()
+     */
+    public boolean hasNext() {
+        return array != null && pos < array.length;
+    }
+
+    /* (non-Javadoc)
+     * @see java.util.Iterator#next()
+     */
+    public Object next() {
+        return array[pos++];
+    }
 
 }

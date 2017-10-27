@@ -7,561 +7,528 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 
-public abstract class AbstractIntList  implements IntList
+public abstract class AbstractIntList implements IntList
 
 {
- protected AbstractIntList()
- {
- }
 
- public boolean add(int o)
- {
-  add(size(), o);
-  return true;
- }
+    protected AbstractIntList() {
+    }
 
- abstract public int get(int index);
+    public boolean add(int o) {
+        add(size(), o);
+        return true;
+    }
 
- @SuppressWarnings("unused")
- public int set(int index, int element)
- {
-  throw new UnsupportedOperationException();
- }
+    abstract public int get(int index);
 
- @SuppressWarnings("unused")
- public void add(int index, int element)
- {
-  throw new UnsupportedOperationException();
- }
+    @SuppressWarnings("unused")
+    public int set(int index, int element) {
+        throw new UnsupportedOperationException();
+    }
 
- @SuppressWarnings("unused")
- public int removeAt(int index)
- {
-  throw new UnsupportedOperationException();
- }
+    @SuppressWarnings("unused")
+    public void add(int index, int element) {
+        throw new UnsupportedOperationException();
+    }
 
- public boolean isEmpty()
- {
-  return size() == 0;
- }
+    @SuppressWarnings("unused")
+    public int removeAt(int index) {
+        throw new UnsupportedOperationException();
+    }
 
- public int indexOf(int o)
- {
-  IntListIterator e = listIterator();
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
-  while(e.hasNext())
-   if(o == e.next())
-    return e.previousIndex();
+    public int indexOf(int o) {
+        IntListIterator e = listIterator();
 
-  return -1;
- }
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                return e.previousIndex();
+            }
+        }
 
- public int lastIndexOf(int o)
- {
-  IntListIterator e = listIterator(size());
+        return -1;
+    }
 
-  while(e.hasPrevious())
-   if(o == e.previous())
-    return e.nextIndex();
+    public int lastIndexOf(int o) {
+        IntListIterator e = listIterator(size());
 
-  return -1;
- }
+        while (e.hasPrevious()) {
+            if (o == e.previous()) {
+                return e.nextIndex();
+            }
+        }
 
- public void clear()
- {
-  removeRange(0, size());
- }
+        return -1;
+    }
 
- public int[] toArray()
- {
-  int[] result = new int[size()];
-  IntListIterator e = listIterator();
-  for(int i = 0; e.hasNext(); i++)
-   result[i] = e.next();
-  return result;
- }
+    public void clear() {
+        removeRange(0, size());
+    }
 
- public boolean contains(int o)
- {
-  IntListIterator e = listIterator();
+    public int[] toArray() {
+        int[] result = new int[size()];
+        IntListIterator e = listIterator();
+        for (int i = 0; e.hasNext(); i++) {
+            result[i] = e.next();
+        }
+        return result;
+    }
 
-  while(e.hasNext())
-   if(o == e.next())
-    return true;
-  return false;
- }
+    public boolean contains(int o) {
+        IntListIterator e = listIterator();
 
- public boolean addAll(int index, Collection<Integer> c)
- {
-  boolean modified = false;
-  Iterator<Integer> e = c.iterator();
-  while(e.hasNext())
-  {
-   add(index++, e.next().intValue());
-   modified = true;
-  }
-  return modified;
- }
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
- public Iterator<Integer> iterator()
- {
-  return new Itr();
- }
+    public boolean addAll(int index, Collection<Integer> c) {
+        boolean modified = false;
+        Iterator<Integer> e = c.iterator();
+        while (e.hasNext()) {
+            add(index++, e.next().intValue());
+            modified = true;
+        }
+        return modified;
+    }
 
- public IntListIterator listIterator()
- {
-  return listIterator(0);
- }
+    public Iterator<Integer> iterator() {
+        return new Itr();
+    }
 
- public IntListIterator listIterator(final int index)
- {
-  if(index < 0 || index > size())
-   throw new IndexOutOfBoundsException("Index: " + index);
+    public IntListIterator listIterator() {
+        return listIterator(0);
+    }
 
-  return new ListItr(index);
- }
+    public IntListIterator listIterator(final int index) {
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
 
- private class Itr implements Iterator<Integer>
- {
-  int cursor           = 0;
-  int lastRet          = -1;
-  int expectedModCount = modCount;
+        return new ListItr(index);
+    }
 
-  public boolean hasNext()
-  {
-   return cursor != size();
-  }
+    private class Itr implements Iterator<Integer> {
 
-  public Integer next()
-  {
-   checkForComodification();
-   try
-   {
-    Integer next = get(cursor);
-    lastRet = cursor++;
-    return next;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        int cursor = 0;
+        int lastRet = -1;
+        int expectedModCount = modCount;
 
-  public void remove()
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+        public boolean hasNext() {
+            return cursor != size();
+        }
 
-   try
-   {
-    AbstractIntList.this.remove(lastRet);
-    if(lastRet < cursor)
-     cursor--;
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        public Integer next() {
+            checkForComodification();
+            try {
+                Integer next = get(cursor);
+                lastRet = cursor++;
+                return next;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
-  final void checkForComodification()
-  {
-   if(modCount != expectedModCount)
-    throw new ConcurrentModificationException();
-  }
- }
+        public void remove() {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
- private class ListItr implements IntListIterator
- {
-  int cursor           = 0;
-  int lastRet          = -1;
-  int expectedModCount = modCount;
+            try {
+                AbstractIntList.this.remove(lastRet);
+                if (lastRet < cursor) {
+                    cursor--;
+                }
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  ListItr(int index)
-  {
-   cursor = index;
-  }
+        final void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
 
-  public boolean hasPrevious()
-  {
-   return cursor != 0;
-  }
+    private class ListItr implements IntListIterator {
 
-  public int previous()
-  {
-   checkForComodification();
-   try
-   {
-    int i = cursor - 1;
-    int previous = get(i);
-    lastRet = cursor = i;
-    return previous;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        int cursor = 0;
+        int lastRet = -1;
+        int expectedModCount = modCount;
 
-  public int nextIndex()
-  {
-   return cursor;
-  }
+        ListItr(int index) {
+            cursor = index;
+        }
 
-  public int previousIndex()
-  {
-   return cursor - 1;
-  }
+        public boolean hasPrevious() {
+            return cursor != 0;
+        }
 
-  public void set(int o)
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+        public int previous() {
+            checkForComodification();
+            try {
+                int i = cursor - 1;
+                int previous = get(i);
+                lastRet = cursor = i;
+                return previous;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
-   try
-   {
-    AbstractIntList.this.set(lastRet, o);
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        public int nextIndex() {
+            return cursor;
+        }
 
-  public void add(int o)
-  {
-   checkForComodification();
+        public int previousIndex() {
+            return cursor - 1;
+        }
 
-   try
-   {
-    AbstractIntList.this.add(cursor++, o);
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        public void set(int o) {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
-  public boolean hasNext()
-  {
-   return cursor != size();
-  }
+            try {
+                AbstractIntList.this.set(lastRet, o);
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  public int next()
-  {
-   checkForComodification();
-   try
-   {
-    Integer next = get(cursor);
-    lastRet = cursor++;
-    return next;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        public void add(int o) {
+            checkForComodification();
 
-  public void remove()
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+            try {
+                AbstractIntList.this.add(cursor++, o);
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-   try
-   {
-    AbstractIntList.this.remove(lastRet);
-    if(lastRet < cursor)
-     cursor--;
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        public boolean hasNext() {
+            return cursor != size();
+        }
 
-  final void checkForComodification()
-  {
-   if(modCount != expectedModCount)
-    throw new ConcurrentModificationException();
-  }
- }
+        public int next() {
+            checkForComodification();
+            try {
+                Integer next = get(cursor);
+                lastRet = cursor++;
+                return next;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
- public IntList subList(int fromIndex, int toIndex)
- {
-  return (this instanceof RandomAccess ? new RandomAccessSubList(this, fromIndex, toIndex) : new SubList(this,
-    fromIndex, toIndex));
- }
+        public void remove() {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
- public boolean equals(Object o)
- {
-  if(o == this)
-   return true;
-  if(!(o instanceof IntList))
-   return false;
+            try {
+                AbstractIntList.this.remove(lastRet);
+                if (lastRet < cursor) {
+                    cursor--;
+                }
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  IntListIterator e1 = listIterator();
-  IntListIterator e2 = ((IntList) o).listIterator();
-  while(e1.hasNext() && e2.hasNext())
-  {
-   if(e1.next() != e2.next())
-    return false;
-  }
-  return !(e1.hasNext() || e2.hasNext());
- }
+        final void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
 
- public int hashCode()
- {
-  int hashCode = 1;
-  IntListIterator i = listIterator();
+    public IntList subList(int fromIndex, int toIndex) {
+        return (this instanceof RandomAccess ? new RandomAccessSubList(this, fromIndex, toIndex)
+                : new SubList(this, fromIndex, toIndex));
+    }
 
-  while(i.hasNext())
-  {
-   int obj = i.next();
-   hashCode = 31 * hashCode + obj;
-  }
-  return hashCode;
- }
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof IntList)) {
+            return false;
+        }
 
- public boolean remove(int o)
- {
-  IntListIterator e = listIterator();
+        IntListIterator e1 = listIterator();
+        IntListIterator e2 = ((IntList) o).listIterator();
+        while (e1.hasNext() && e2.hasNext()) {
+            if (e1.next() != e2.next()) {
+                return false;
+            }
+        }
+        return !(e1.hasNext() || e2.hasNext());
+    }
 
-  while(e.hasNext())
-  {
-   if(o == e.next())
-   {
-    e.remove();
-    return true;
-   }
-  }
+    public int hashCode() {
+        int hashCode = 1;
+        IntListIterator i = listIterator();
 
-  return false;
- }
+        while (i.hasNext()) {
+            int obj = i.next();
+            hashCode = 31 * hashCode + obj;
+        }
+        return hashCode;
+    }
 
- protected void removeRange(int fromIndex, int toIndex)
- {
-  IntListIterator it = listIterator(fromIndex);
-  for(int i = 0, n = toIndex - fromIndex; i < n; i++)
-  {
-   it.next();
-   it.remove();
-  }
- }
+    public boolean remove(int o) {
+        IntListIterator e = listIterator();
 
- protected transient int modCount = 0;
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                e.remove();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void removeRange(int fromIndex, int toIndex) {
+        IntListIterator it = listIterator(fromIndex);
+        for (int i = 0, n = toIndex - fromIndex; i < n; i++) {
+            it.next();
+            it.remove();
+        }
+    }
+
+    protected transient int modCount = 0;
 }
 
 class SubList extends AbstractIntList {
- private AbstractIntList l;
- private int offset;
- private int size;
- private int expectedModCount;
 
- SubList(AbstractIntList list, int fromIndex, int toIndex) {
-     if (fromIndex < 0)
-         throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
-     if (toIndex > list.size())
-         throw new IndexOutOfBoundsException("toIndex = " + toIndex);
-     if (fromIndex > toIndex)
-         throw new IllegalArgumentException("fromIndex(" + fromIndex +
-                                            ") > toIndex(" + toIndex + ")");
-     l = list;
-     offset = fromIndex;
-     size = toIndex - fromIndex;
-     expectedModCount = l.modCount;
- }
+    private AbstractIntList l;
+    private int offset;
+    private int size;
+    private int expectedModCount;
 
- public int set(int index, int element) {
-     rangeCheck(index);
-     checkForComodification();
-     return l.set(index+offset, element);
- }
+    SubList(AbstractIntList list, int fromIndex, int toIndex) {
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        }
+        if (toIndex > list.size()) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        }
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+        }
+        l = list;
+        offset = fromIndex;
+        size = toIndex - fromIndex;
+        expectedModCount = l.modCount;
+    }
 
- public int get(int index) {
-     rangeCheck(index);
-     checkForComodification();
-     return l.get(index+offset);
- }
+    public int set(int index, int element) {
+        rangeCheck(index);
+        checkForComodification();
+        return l.set(index + offset, element);
+    }
 
- public int size() {
-     checkForComodification();
-     return size;
- }
+    public int get(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        return l.get(index + offset);
+    }
 
- public void add(int index, int element) {
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException();
-     checkForComodification();
-     l.add(index+offset, element);
-     expectedModCount = l.modCount;
-     size++;
-     modCount++;
- }
+    public int size() {
+        checkForComodification();
+        return size;
+    }
 
- public int removeAt(int index) {
-     rangeCheck(index);
-     checkForComodification();
-     int result = l.removeAt(index+offset);
-     expectedModCount = l.modCount;
-     size--;
-     modCount++;
-     return result;
- }
+    public void add(int index, int element) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+        checkForComodification();
+        l.add(index + offset, element);
+        expectedModCount = l.modCount;
+        size++;
+        modCount++;
+    }
 
- protected void removeRange(int fromIndex, int toIndex) {
-     checkForComodification();
-     l.removeRange(fromIndex+offset, toIndex+offset);
-     expectedModCount = l.modCount;
-     size -= (toIndex-fromIndex);
-     modCount++;
- }
+    public int removeAt(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        int result = l.removeAt(index + offset);
+        expectedModCount = l.modCount;
+        size--;
+        modCount++;
+        return result;
+    }
 
- public boolean addAll(Collection<Integer> c) {
-     return addAll(size, c);
- }
+    protected void removeRange(int fromIndex, int toIndex) {
+        checkForComodification();
+        l.removeRange(fromIndex + offset, toIndex + offset);
+        expectedModCount = l.modCount;
+        size -= (toIndex - fromIndex);
+        modCount++;
+    }
 
- public boolean addAll(int index, Collection<Integer> c) {
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException(
-             "Index: "+index+", Size: "+size);
-     int cSize = c.size();
-     if (cSize==0)
-         return false;
+    public boolean addAll(Collection<Integer> c) {
+        return addAll(size, c);
+    }
 
-     checkForComodification();
-     l.addAll(offset+index, c);
-     expectedModCount = l.modCount;
-     size += cSize;
-     modCount++;
-     return true;
- }
+    public boolean addAll(int index, Collection<Integer> c) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        int cSize = c.size();
+        if (cSize == 0) {
+            return false;
+        }
 
- public Iterator<Integer> iterator() {
-  checkForComodification();
+        checkForComodification();
+        l.addAll(offset + index, c);
+        expectedModCount = l.modCount;
+        size += cSize;
+        modCount++;
+        return true;
+    }
 
-  return new Iterator<Integer>() {
-      private IntListIterator i = l.listIterator(offset);
+    public Iterator<Integer> iterator() {
+        checkForComodification();
 
-      public boolean hasNext() {
-          return nextIndex() < size;
-      }
+        return new Iterator<Integer>() {
+            private IntListIterator i = l.listIterator(offset);
 
-      public Integer next() {
-          if (hasNext())
-              return i.next();
-          else
-              throw new NoSuchElementException();
-      }
+            public boolean hasNext() {
+                return nextIndex() < size;
+            }
+
+            public Integer next() {
+                if (hasNext()) {
+                    return i.next();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
 
-      public int nextIndex() {
-          return i.nextIndex() - offset;
-      }
+            public int nextIndex() {
+                return i.nextIndex() - offset;
+            }
 
-      public void remove() {
-          i.remove();
-          expectedModCount = l.modCount;
-          size--;
-          modCount++;
-      }
+            public void remove() {
+                i.remove();
+                expectedModCount = l.modCount;
+                size--;
+                modCount++;
+            }
 
-  };
- }
+        };
+    }
 
- public IntListIterator listIterator(final int index) {
-     checkForComodification();
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException(
-             "Index: "+index+", Size: "+size);
+    public IntListIterator listIterator(final int index) {
+        checkForComodification();
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
 
-     return new IntListIterator() {
-         private IntListIterator i = l.listIterator(index+offset);
+        return new IntListIterator() {
+            private IntListIterator i = l.listIterator(index + offset);
 
-         public boolean hasNext() {
-             return nextIndex() < size;
-         }
+            public boolean hasNext() {
+                return nextIndex() < size;
+            }
 
-         public int next() {
-             if (hasNext())
-                 return i.next();
-             else
-                 throw new NoSuchElementException();
-         }
+            public int next() {
+                if (hasNext()) {
+                    return i.next();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
-         public boolean hasPrevious() {
-             return previousIndex() >= 0;
-         }
+            public boolean hasPrevious() {
+                return previousIndex() >= 0;
+            }
 
-         public int previous() {
-             if (hasPrevious())
-                 return i.previous();
-             else
-                 throw new NoSuchElementException();
-         }
+            public int previous() {
+                if (hasPrevious()) {
+                    return i.previous();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
-         public int nextIndex() {
-             return i.nextIndex() - offset;
-         }
+            public int nextIndex() {
+                return i.nextIndex() - offset;
+            }
 
-         public int previousIndex() {
-             return i.previousIndex() - offset;
-         }
+            public int previousIndex() {
+                return i.previousIndex() - offset;
+            }
 
-         public void remove() {
-             i.remove();
-             expectedModCount = l.modCount;
-             size--;
-             modCount++;
-         }
+            public void remove() {
+                i.remove();
+                expectedModCount = l.modCount;
+                size--;
+                modCount++;
+            }
 
-         public void set(int o) {
-             i.set(o);
-         }
+            public void set(int o) {
+                i.set(o);
+            }
 
-         public void add(int o) {
-             i.add(o);
-             expectedModCount = l.modCount;
-             size++;
-             modCount++;
-         }
-     };
- }
+            public void add(int o) {
+                i.add(o);
+                expectedModCount = l.modCount;
+                size++;
+                modCount++;
+            }
+        };
+    }
 
- public IntList subList(int fromIndex, int toIndex) {
-     return new SubList(this, fromIndex, toIndex);
- }
+    public IntList subList(int fromIndex, int toIndex) {
+        return new SubList(this, fromIndex, toIndex);
+    }
 
- private void rangeCheck(int index) {
-     if (index<0 || index>=size)
-         throw new IndexOutOfBoundsException("Index: "+index+
-                                             ",Size: "+size);
- }
+    private void rangeCheck(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ",Size: " + size);
+        }
+    }
 
- private void checkForComodification() {
-     if (l.modCount != expectedModCount)
-         throw new ConcurrentModificationException();
- }
+    private void checkForComodification() {
+        if (l.modCount != expectedModCount) {
+            throw new ConcurrentModificationException();
+        }
+    }
 }
 
 class RandomAccessSubList extends SubList implements RandomAccess {
- RandomAccessSubList(AbstractIntList list, int fromIndex, int toIndex) {
-     super(list, fromIndex, toIndex);
- }
 
- public IntList subList(int fromIndex, int toIndex) {
-     return new RandomAccessSubList(this, fromIndex, toIndex);
- }
+    RandomAccessSubList(AbstractIntList list, int fromIndex, int toIndex) {
+        super(list, fromIndex, toIndex);
+    }
+
+    public IntList subList(int fromIndex, int toIndex) {
+        return new RandomAccessSubList(this, fromIndex, toIndex);
+    }
 }

@@ -10,15 +10,13 @@ package com.pri.messenger;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class SyncReceiveTimeoutException extends MessageDeliveryException
-{
+public class SyncReceiveTimeoutException extends MessageDeliveryException {
 
- public SyncReceiveTimeoutException(long timeout)
- {
-  super("Receive operation timeouted: "+timeout+"ms");
- }
+    public SyncReceiveTimeoutException(long timeout) {
+        super("Receive operation timeouted: " + timeout + "ms");
+    }
 
 }

@@ -1,6 +1,6 @@
 package com.pri.util;
 
-public interface IntID
-{
- public int getID(); 
+public interface IntID {
+
+    public int getID();
 }

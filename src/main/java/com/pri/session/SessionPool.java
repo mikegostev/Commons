@@ -6,44 +6,42 @@
  */
 package com.pri.session;
 
-import java.util.List;
-
 import com.pri.util.Interval;
+import java.util.List;
 
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
 public interface SessionPool<CS extends ClientSession>
 
 {
 
- public String createSession(CS cl)
-   throws UnableGenerateSessionKeyException;
+    public String createSession(CS cl) throws UnableGenerateSessionKeyException;
 
- public CS getSessionByUser( String uname );
- public CS verifySession(String k, RequestData rq);
+    public CS getSessionByUser(String uname);
 
- public CS getClientData(String k);
+    public CS verifySession(String k, RequestData rq);
 
- public void removeExpiredSessions();
+    public CS getClientData(String k);
 
- public List<CS> listSessions();
+    public void removeExpiredSessions();
 
- public List<CS> listSessions(List<Object> uIDs, String sessK,
-   String addr, Interval startTimeIval, Interval updateTimeIval,
-   Interval expireTimeIval);
+    public List<CS> listSessions();
 
- public boolean dropSession(String k);
+    public List<CS> listSessions(List<Object> uIDs, String sessK, String addr, Interval startTimeIval,
+            Interval updateTimeIval, Interval expireTimeIval);
 
- public void destroy();
+    public boolean dropSession(String k);
 
- public void dropUserSession(String user);
+    public void destroy();
 
- public void dropUserSession(int userID);
+    public void dropUserSession(String user);
 
- public CS getSession(int userID);
+    public void dropUserSession(int userID);
+
+    public CS getSession(int userID);
 
 }

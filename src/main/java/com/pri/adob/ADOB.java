@@ -3,41 +3,40 @@ package com.pri.adob;
 import java.io.IOException;
 import java.io.InputStream;
 
-public interface ADOB
-{
+public interface ADOB {
 
- byte[] getContent() throws IOException;
+    byte[] getContent() throws IOException;
 
- InputStream getInputStream() throws IOException;
+    InputStream getInputStream() throws IOException;
 
- String getContentType();
+    String getContentType();
 
- long getContentSize();
+    long getContentSize();
 
- String getCharset();
+    String getCharset();
 
- String getPrimaryType();
+    String getPrimaryType();
 
- String getSubType();
+    String getSubType();
 
- String getName();
+    String getName();
 
- String getFileName();
+    String getFileName();
 
- String getTypeParameter(String prm);
+    String getTypeParameter(String prm);
 
- String getDispositionParameter(String prm);
+    String getDispositionParameter(String prm);
 
- String getDisposition();
+    String getDisposition();
 
- String getPosition();
+    String getPosition();
 
- Object getMetaInfo();
+    Object getMetaInfo();
 
- String getContentID();
+    String getContentID();
 
- boolean isMetaSerialized();
+    boolean isMetaSerialized();
 
- void release();
+    void release();
 
 }
