@@ -7,104 +7,91 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class FileADOB extends AbstractADOB
-{
- private File file;
+public class FileADOB extends AbstractADOB {
 
- private long size=-1;
+    private File file;
 
- private AtomicBoolean temp = new AtomicBoolean( false );
- 
- public FileADOB(File f)
- {
-  this(f,null,false);
- }
+    private long size = -1;
 
- public FileADOB(File f,String ctyp)
- {
-  this(f,ctyp,false);
- }
+    private AtomicBoolean temp = new AtomicBoolean(false);
 
- public FileADOB(File f,String ctyp, boolean tmp)
- {
-  super(ctyp,null,null,false);
-  file=f;
+    public FileADOB(File f) {
+        this(f, null, false);
+    }
 
-  temp.set(tmp);
- }
+    public FileADOB(File f, String ctyp) {
+        this(f, ctyp, false);
+    }
 
- public byte[] getContent() throws IOException
- {
-  byte[] buf = new byte[ (int)getContentSize() ];
-  
-  FileInputStream fis = new FileInputStream( file );
-  
-  fis.read( buf );
-  
-  fis.close();
-  
-  return buf;
- }
+    public FileADOB(File f, String ctyp, boolean tmp) {
+        super(ctyp, null, null, false);
+        file = f;
 
- public InputStream getInputStream() throws FileNotFoundException
- {
-  return new FileInputStream( file );
- }
+        temp.set(tmp);
+    }
 
- public long getContentSize()
- {
-  if( size > 0 )
-   return size;
-  
-  return file.length();
- }
+    public byte[] getContent() throws IOException {
+        byte[] buf = new byte[(int) getContentSize()];
 
- public boolean setTemporary( boolean tmp )
- {
-  return temp.getAndSet(tmp);
- }
+        FileInputStream fis = new FileInputStream(file);
 
- public File getFile()
- {
-  return file;
- }
+        fis.read(buf);
 
- public void setFile(File f)
- {
-  file=f;
-  size=-1;
- }
+        fis.close();
 
- public String getFileName()
- {
-  return file.getName();
- }
- 
- public void release()
- {
-  if( temp.get() && file != null )
-  {
-   file.delete();
-   file=null;
-  }
- }
- 
- public void  finalize() throws Throwable
- {
-  super.finalize();
-  
-  if( file != null && temp.get() )
-  {
-   file.delete();
-   file=null;
-  }
- }
- 
- public boolean equals( Object fadb )
- {
-  if( !( fadb instanceof FileADOB ) )
-   return false;
-  
-  return ((FileADOB)fadb).file.equals(file);
- }
+        return buf;
+    }
+
+    public InputStream getInputStream() throws FileNotFoundException {
+        return new FileInputStream(file);
+    }
+
+    public long getContentSize() {
+        if (size > 0) {
+            return size;
+        }
+
+        return file.length();
+    }
+
+    public boolean setTemporary(boolean tmp) {
+        return temp.getAndSet(tmp);
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File f) {
+        file = f;
+        size = -1;
+    }
+
+    public String getFileName() {
+        return file.getName();
+    }
+
+    public void release() {
+        if (temp.get() && file != null) {
+            file.delete();
+            file = null;
+        }
+    }
+
+    public void finalize() throws Throwable {
+        super.finalize();
+
+        if (file != null && temp.get()) {
+            file.delete();
+            file = null;
+        }
+    }
+
+    public boolean equals(Object fadb) {
+        if (!(fadb instanceof FileADOB)) {
+            return false;
+        }
+
+        return ((FileADOB) fadb).file.equals(file);
+    }
 }

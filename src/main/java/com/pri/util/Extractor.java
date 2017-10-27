@@ -1,6 +1,6 @@
 package com.pri.util;
 
-public interface Extractor<Src, Dst>
-{
- Dst extract( Src obj);
+public interface Extractor<Src, Dst> {
+
+    Dst extract(Src obj);
 }

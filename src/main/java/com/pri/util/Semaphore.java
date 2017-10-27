@@ -6,108 +6,86 @@ package com.pri.util;
  * To change the template for this generated file go to
  * Window - Preferences - Java - Code Generation - Code and Comments
  */
-public class Semaphore
-{
- private volatile int     readLocks;
- private volatile boolean writeLocked;
+public class Semaphore {
 
- private Object           rLock;
- private Object           wLock;
- private volatile Thread  wlOwner;
+    private volatile int readLocks;
+    private volatile boolean writeLocked;
 
- public Semaphore()
- {
-  rLock = new Object();
-  wLock = new Object();
-  readLocks=0;
-  writeLocked=false;
+    private Object rLock;
+    private Object wLock;
+    private volatile Thread wlOwner;
 
- }
+    public Semaphore() {
+        rLock = new Object();
+        wLock = new Object();
+        readLocks = 0;
+        writeLocked = false;
 
- public void getReadLock()
- {
-  synchronized (wLock)
-  {
-   while ( writeLocked )
-   {
+    }
+
+    public void getReadLock() {
+        synchronized (wLock) {
+            while (writeLocked) {
 //System.out.println("Threads. Current: "+Thread.currentThread()+" WL owher: "+wlOwner);
-    if( wlOwner != Thread.currentThread() )
-    {
-     try
-     {
-      wLock.wait();
-     }
-     catch (InterruptedException ex)
-     {}
+                if (wlOwner != Thread.currentThread()) {
+                    try {
+                        wLock.wait();
+                    } catch (InterruptedException ex) {
+                    }
+                } else {
+                    break;
+                }
+
+            }
+        }
+
+        synchronized (rLock) {
+            readLocks++;
+        }
     }
-    else
-     break;
-    
-   }
-  }
 
-  synchronized (rLock)
-  {
-   readLocks++;
-  }
- }
+    public void getWriteLock() {
+        synchronized (wLock) {
+            while (writeLocked) {
+                if (wlOwner == Thread.currentThread()) {
+                    return;
+                }
 
- public void getWriteLock()
- {
-  synchronized (wLock)
-  {
-   while ( writeLocked )
-   {
-    if( wlOwner == Thread.currentThread() )
-     return;
+                try {
+                    wLock.wait();
+                } catch (InterruptedException ex) {
+                }
+            }
 
-    try
-    {
-     wLock.wait();
+            writeLocked = true;
+
+            synchronized (rLock) {
+                while (readLocks > 0) {
+                    try {
+                        rLock.wait();
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+
+            wlOwner = Thread.currentThread();
+        }
     }
-    catch (InterruptedException ex)
-    {
+
+
+    public void releaseReadLock() {
+        synchronized (rLock) {
+            readLocks--;
+            rLock.notifyAll();
+        }
     }
-   }
 
-   writeLocked = true;
-
-   synchronized (rLock)
-   {
-    while (readLocks > 0)
-    {
-     try
-     {
-      rLock.wait();
-     }
-     catch (InterruptedException ex)
-     {
-     }
+    public void releaseWriteLock() {
+        synchronized (wLock) {
+            wlOwner = null;
+            writeLocked = false;
+            wLock.notifyAll();
+        }
     }
-   }
-
-   wlOwner = Thread.currentThread();
-  }
- }
-
-
- public void releaseReadLock()
- {
-  synchronized (rLock)
-  {
-   readLocks--;
-   rLock.notifyAll();
-  }
- }
-
- public void releaseWriteLock()
- {
-  synchronized (wLock)
-  {
-   wlOwner=null;
-   writeLocked = false;
-   wLock.notifyAll();
-  }
- }
 
 }

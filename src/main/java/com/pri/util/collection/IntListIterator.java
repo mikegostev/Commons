@@ -1,22 +1,22 @@
 package com.pri.util.collection;
 
-public interface IntListIterator extends IntIterator
-{
- boolean hasNext();
+public interface IntListIterator extends IntIterator {
 
- int next();
+    boolean hasNext();
 
- boolean hasPrevious();
+    int next();
 
- int previous();
+    boolean hasPrevious();
 
- int nextIndex();
+    int previous();
 
- int previousIndex();
+    int nextIndex();
 
- void remove();
+    int previousIndex();
 
- void set(int o);
+    void remove();
 
- void add(int o);
+    void set(int o);
+
+    void add(int o);
 }

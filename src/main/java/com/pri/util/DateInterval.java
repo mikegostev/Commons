@@ -3,61 +3,51 @@ package com.pri.util;
 import java.io.Serializable;
 import java.util.Date;
 
-public class DateInterval implements Serializable
-{
- private long begin;
- private long end;
+public class DateInterval implements Serializable {
 
- public DateInterval(Date b, Date e)
- {
-  begin = b.getTime();
-  end = e.getTime();
- }
- 
- public DateInterval(long b, long e)
- {
-  begin = b;
-  end = e;
- }
+    private long begin;
+    private long end;
 
- public long getBeginTimestamp()
- {
-  return begin;
- }
+    public DateInterval(Date b, Date e) {
+        begin = b.getTime();
+        end = e.getTime();
+    }
 
- public Date getBeginDate()
- {
-  return new Date(begin);
- }
+    public DateInterval(long b, long e) {
+        begin = b;
+        end = e;
+    }
 
- public void setBegin(long begin)
- {
-  this.begin = begin;
- }
+    public long getBeginTimestamp() {
+        return begin;
+    }
 
- public void setBegin(Date begin)
- {
-  this.begin = begin.getTime();
- }
+    public Date getBeginDate() {
+        return new Date(begin);
+    }
 
- public long getEndTimestamp()
- {
-  return end;
- }
+    public void setBegin(long begin) {
+        this.begin = begin;
+    }
 
- public Date getEndDate()
- {
-  return new Date(end);
- }
+    public void setBegin(Date begin) {
+        this.begin = begin.getTime();
+    }
 
- public void setEnd(long e)
- {
-  this.end = e;
- }
+    public long getEndTimestamp() {
+        return end;
+    }
 
- public void setEnd(Date e)
- {
-  this.end = e.getTime();
- }
+    public Date getEndDate() {
+        return new Date(end);
+    }
+
+    public void setEnd(long e) {
+        this.end = e;
+    }
+
+    public void setEnd(Date e) {
+        this.end = e.getTime();
+    }
 
 }

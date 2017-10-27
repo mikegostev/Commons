@@ -1,42 +1,36 @@
 package com.pri.secfg;
 
-public class Value
-{
- private String stringValue;
- private int    line;
+public class Value {
 
- public Value()
- {}
+    private String stringValue;
+    private int line;
 
- public Value(String varVal, int ln)
- {
-  stringValue = varVal;
-  line=ln;
- }
+    public Value() {
+    }
 
- public String getStringValue()
- {
-  return stringValue;
- }
+    public Value(String varVal, int ln) {
+        stringValue = varVal;
+        line = ln;
+    }
 
- public void setStringValue(String stringValue)
- {
-  this.stringValue = stringValue;
- }
+    public String getStringValue() {
+        return stringValue;
+    }
 
- public int getLine()
- {
-  return line;
- }
+    public void setStringValue(String stringValue) {
+        this.stringValue = stringValue;
+    }
 
- public void setLine(int line)
- {
-  this.line = line;
- }
- 
- @Override
- public String toString()
- {
-  return stringValue;
- }
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line = line;
+    }
+
+    @Override
+    public String toString() {
+        return stringValue;
+    }
 }

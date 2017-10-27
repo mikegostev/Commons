@@ -1,8 +1,8 @@
 package com.pri.util.stream;
 
-public interface PumpListener
-{
- void dataPumped(int k);
+public interface PumpListener {
 
- void endOfStream();
+    void dataPumped(int k);
+
+    void endOfStream();
 }

@@ -14,32 +14,27 @@ import java.io.UnsupportedEncodingException;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public abstract class BeanMessageBody implements XMLableMessageBody
-{
+public abstract class BeanMessageBody implements XMLableMessageBody {
 
 
- /* (non-Javadoc)
-  * @see com.pri.messenger.MessageBody#toXML()
-  */
- public String toXML()
- {
-  ByteArrayOutputStream baos = new ByteArrayOutputStream();
-  XMLEncoder e = new XMLEncoder( baos );
-  e.writeObject(this);
-  e.close();
-  
-  try
-  {
-   return "<![CDATA["+new String( baos.toByteArray(), "UTF-8")+"]]>";
-  }
-  catch (UnsupportedEncodingException e1)
-  {
-  }
-  
-  return "";
- }
+    /* (non-Javadoc)
+     * @see com.pri.messenger.MessageBody#toXML()
+     */
+    public String toXML() {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        XMLEncoder e = new XMLEncoder(baos);
+        e.writeObject(this);
+        e.close();
+
+        try {
+            return "<![CDATA[" + new String(baos.toByteArray(), "UTF-8") + "]]>";
+        } catch (UnsupportedEncodingException e1) {
+        }
+
+        return "";
+    }
 
 }

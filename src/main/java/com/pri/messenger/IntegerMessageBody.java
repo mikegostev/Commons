@@ -12,45 +12,42 @@ import java.io.Serializable;
 /**
  * @author Mike
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class IntegerMessageBody implements Serializable,SerializableMessageBody
-{
+public class IntegerMessageBody implements Serializable, SerializableMessageBody {
 
- private int val;
- /**
-  * @param obj
-  */
- public IntegerMessageBody(int v)
- {
-  this.val = v;
- }
- /**
-  * 
-  */
- public IntegerMessageBody()
- {
- }
+    private int val;
 
- /* (non-Javadoc)
-  * @see com.pri.messenger.MessageBody#toXML()
-  */
- public String toXML()
- {
-  // TODO Auto-generated method stub
-  return null;
- }
+    /**
+     * @param obj
+     */
+    public IntegerMessageBody(int v) {
+        this.val = v;
+    }
 
- public int intValue()
- {
-  return val;
- }
-  /**
-  * @param obj The obj to set.
-  */
- public void setValue(int v)
- {
-  this.val = v;
- }
+    /**
+     *
+     */
+    public IntegerMessageBody() {
+    }
+
+    /* (non-Javadoc)
+     * @see com.pri.messenger.MessageBody#toXML()
+     */
+    public String toXML() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public int intValue() {
+        return val;
+    }
+
+    /**
+     * @param obj The obj to set.
+     */
+    public void setValue(int v) {
+        this.val = v;
+    }
 }

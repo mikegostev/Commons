@@ -1,4 +1,5 @@
 package com.pri.util.collection;
+
 public interface LongIterable {
 
     /**

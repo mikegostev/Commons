@@ -1,22 +1,22 @@
 package com.pri.util.collection;
 
-public interface LongListIterator extends LongIterator
-{
- boolean hasNext();
+public interface LongListIterator extends LongIterator {
 
- long next();
+    boolean hasNext();
 
- boolean hasPrevious();
+    long next();
 
- long previous();
+    boolean hasPrevious();
 
- int nextIndex();
+    long previous();
 
- int previousIndex();
+    int nextIndex();
 
- void remove();
+    int previousIndex();
 
- void set(long o);
+    void remove();
 
- void add(long o);
+    void set(long o);
+
+    void add(long o);
 }

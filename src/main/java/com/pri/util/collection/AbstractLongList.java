@@ -7,618 +7,584 @@ import java.util.NoSuchElementException;
 import java.util.RandomAccess;
 
 
-public abstract class AbstractLongList  implements LongList,LongIterable, Iterable<Long> 
+public abstract class AbstractLongList implements LongList, LongIterable, Iterable<Long>
 
 {
- protected AbstractLongList()
- {
- }
 
- @Override
- public boolean add(long o)
- {
-  add(size(), o);
-  return true;
- }
+    protected AbstractLongList() {
+    }
 
- @Override
- abstract public long get(int index);
+    @Override
+    public boolean add(long o) {
+        add(size(), o);
+        return true;
+    }
 
- @Override
- public long set(int index, long element)
- {
-  throw new UnsupportedOperationException();
- }
+    @Override
+    abstract public long get(int index);
 
- @Override
- public void add(int index, long element)
- {
-  throw new UnsupportedOperationException();
- }
+    @Override
+    public long set(int index, long element) {
+        throw new UnsupportedOperationException();
+    }
 
- @Override
- public long removeAt(int index)
- {
-  throw new UnsupportedOperationException();
- }
+    @Override
+    public void add(int index, long element) {
+        throw new UnsupportedOperationException();
+    }
 
- @Override
- public boolean isEmpty()
- {
-  return size() == 0;
- }
+    @Override
+    public long removeAt(int index) {
+        throw new UnsupportedOperationException();
+    }
 
- @Override
- public int indexOf(long o)
- {
-  LongListIterator e = listIterator();
+    @Override
+    public boolean isEmpty() {
+        return size() == 0;
+    }
 
-  while(e.hasNext())
-   if(o == e.next())
-    return e.previousIndex();
+    @Override
+    public int indexOf(long o) {
+        LongListIterator e = listIterator();
 
-  return -1;
- }
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                return e.previousIndex();
+            }
+        }
 
- @Override
- public int lastIndexOf(long o)
- {
-  LongListIterator e = listIterator(size());
+        return -1;
+    }
 
-  while(e.hasPrevious())
-   if(o == e.previous())
-    return e.nextIndex();
+    @Override
+    public int lastIndexOf(long o) {
+        LongListIterator e = listIterator(size());
 
-  return -1;
- }
+        while (e.hasPrevious()) {
+            if (o == e.previous()) {
+                return e.nextIndex();
+            }
+        }
 
- @Override
- public void clear()
- {
-  removeRange(0, size());
- }
+        return -1;
+    }
 
- @Override
- public long[] toArray()
- {
-  long[] result = new long[size()];
-  LongListIterator e = listIterator();
-  for(int i = 0; e.hasNext(); i++)
-   result[i] = e.next();
-  return result;
- }
+    @Override
+    public void clear() {
+        removeRange(0, size());
+    }
 
- @Override
- public boolean contains(long o)
- {
-  LongListIterator e = listIterator();
+    @Override
+    public long[] toArray() {
+        long[] result = new long[size()];
+        LongListIterator e = listIterator();
+        for (int i = 0; e.hasNext(); i++) {
+            result[i] = e.next();
+        }
+        return result;
+    }
 
-  while(e.hasNext())
-   if(o == e.next())
-    return true;
-  return false;
- }
+    @Override
+    public boolean contains(long o) {
+        LongListIterator e = listIterator();
 
- @Override
- public boolean addAll(int index, Collection<Long> c)
- {
-  boolean modified = false;
-  Iterator<Long> e = c.iterator();
-  while(e.hasNext())
-  {
-   add(index++, e.next().intValue());
-   modified = true;
-  }
-  return modified;
- }
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
- @Override
- public Iterator<Long> iterator()
- {
-  return new Itr();
- }
+    @Override
+    public boolean addAll(int index, Collection<Long> c) {
+        boolean modified = false;
+        Iterator<Long> e = c.iterator();
+        while (e.hasNext()) {
+            add(index++, e.next().intValue());
+            modified = true;
+        }
+        return modified;
+    }
 
- @Override
- public LongListIterator listIterator()
- {
-  return listIterator(0);
- }
+    @Override
+    public Iterator<Long> iterator() {
+        return new Itr();
+    }
 
- @Override
- public LongListIterator listIterator(final int index)
- {
-  if(index < 0 || index > size())
-   throw new IndexOutOfBoundsException("Index: " + index);
+    @Override
+    public LongListIterator listIterator() {
+        return listIterator(0);
+    }
 
-  return new ListItr(index);
- }
+    @Override
+    public LongListIterator listIterator(final int index) {
+        if (index < 0 || index > size()) {
+            throw new IndexOutOfBoundsException("Index: " + index);
+        }
 
- private class Itr implements Iterator<Long>
- {
-  int cursor           = 0;
-  int lastRet          = -1;
-  int expectedModCount = modCount;
+        return new ListItr(index);
+    }
 
-  @Override
-  public boolean hasNext()
-  {
-   return cursor != size();
-  }
+    private class Itr implements Iterator<Long> {
 
-  @Override
-  public Long next()
-  {
-   checkForComodification();
-   try
-   {
-    Long next = get(cursor);
-    lastRet = cursor++;
-    return next;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        int cursor = 0;
+        int lastRet = -1;
+        int expectedModCount = modCount;
 
-  @Override
-  public void remove()
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+        @Override
+        public boolean hasNext() {
+            return cursor != size();
+        }
 
-   try
-   {
-    AbstractLongList.this.remove(lastRet);
-    if(lastRet < cursor)
-     cursor--;
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        @Override
+        public Long next() {
+            checkForComodification();
+            try {
+                Long next = get(cursor);
+                lastRet = cursor++;
+                return next;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
-  final void checkForComodification()
-  {
-   if(modCount != expectedModCount)
-    throw new ConcurrentModificationException();
-  }
- }
+        @Override
+        public void remove() {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
- private class ListItr implements LongListIterator
- {
-  int cursor           = 0;
-  int lastRet          = -1;
-  int expectedModCount = modCount;
+            try {
+                AbstractLongList.this.remove(lastRet);
+                if (lastRet < cursor) {
+                    cursor--;
+                }
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  ListItr(int index)
-  {
-   cursor = index;
-  }
+        final void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
 
-  @Override
-  public boolean hasPrevious()
-  {
-   return cursor != 0;
-  }
+    private class ListItr implements LongListIterator {
 
-  @Override
-  public long previous()
-  {
-   checkForComodification();
-   try
-   {
-    int i = cursor - 1;
-    long previous = get(i);
-    lastRet = cursor = i;
-    return previous;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        int cursor = 0;
+        int lastRet = -1;
+        int expectedModCount = modCount;
 
-  @Override
-  public int nextIndex()
-  {
-   return cursor;
-  }
+        ListItr(int index) {
+            cursor = index;
+        }
 
-  @Override
-  public int previousIndex()
-  {
-   return cursor - 1;
-  }
+        @Override
+        public boolean hasPrevious() {
+            return cursor != 0;
+        }
 
-  @Override
-  public void set(long o)
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+        @Override
+        public long previous() {
+            checkForComodification();
+            try {
+                int i = cursor - 1;
+                long previous = get(i);
+                lastRet = cursor = i;
+                return previous;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
-   try
-   {
-    AbstractLongList.this.set(lastRet, o);
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        @Override
+        public int nextIndex() {
+            return cursor;
+        }
 
-  @Override
-  public void add(long o)
-  {
-   checkForComodification();
+        @Override
+        public int previousIndex() {
+            return cursor - 1;
+        }
 
-   try
-   {
-    AbstractLongList.this.add(cursor++, o);
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        @Override
+        public void set(long o) {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
-  @Override
-  public boolean hasNext()
-  {
-   return cursor != size();
-  }
+            try {
+                AbstractLongList.this.set(lastRet, o);
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  @Override
-  public long next()
-  {
-   checkForComodification();
-   try
-   {
-    Long next = get(cursor);
-    lastRet = cursor++;
-    return next;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    checkForComodification();
-    throw new NoSuchElementException();
-   }
-  }
+        @Override
+        public void add(long o) {
+            checkForComodification();
 
-  @Override
-  public void remove()
-  {
-   if(lastRet == -1)
-    throw new IllegalStateException();
-   checkForComodification();
+            try {
+                AbstractLongList.this.add(cursor++, o);
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-   try
-   {
-    AbstractLongList.this.remove(lastRet);
-    if(lastRet < cursor)
-     cursor--;
-    lastRet = -1;
-    expectedModCount = modCount;
-   }
-   catch(IndexOutOfBoundsException e)
-   {
-    throw new ConcurrentModificationException();
-   }
-  }
+        @Override
+        public boolean hasNext() {
+            return cursor != size();
+        }
 
-  final void checkForComodification()
-  {
-   if(modCount != expectedModCount)
-    throw new ConcurrentModificationException();
-  }
- }
+        @Override
+        public long next() {
+            checkForComodification();
+            try {
+                Long next = get(cursor);
+                lastRet = cursor++;
+                return next;
+            } catch (IndexOutOfBoundsException e) {
+                checkForComodification();
+                throw new NoSuchElementException();
+            }
+        }
 
- @Override
- public LongList subList(int fromIndex, int toIndex)
- {
-  return (this instanceof RandomAccess ? new LongRandomAccessSubList(this, fromIndex, toIndex) : new LongSubList(this,
-    fromIndex, toIndex));
- }
+        @Override
+        public void remove() {
+            if (lastRet == -1) {
+                throw new IllegalStateException();
+            }
+            checkForComodification();
 
- @Override
- public boolean equals(Object o)
- {
-  if(o == this)
-   return true;
-  if(!(o instanceof LongList))
-   return false;
+            try {
+                AbstractLongList.this.remove(lastRet);
+                if (lastRet < cursor) {
+                    cursor--;
+                }
+                lastRet = -1;
+                expectedModCount = modCount;
+            } catch (IndexOutOfBoundsException e) {
+                throw new ConcurrentModificationException();
+            }
+        }
 
-  LongListIterator e1 = listIterator();
-  LongListIterator e2 = ((LongList) o).listIterator();
-  while(e1.hasNext() && e2.hasNext())
-  {
-   if(e1.next() != e2.next())
-    return false;
-  }
-  return !(e1.hasNext() || e2.hasNext());
- }
+        final void checkForComodification() {
+            if (modCount != expectedModCount) {
+                throw new ConcurrentModificationException();
+            }
+        }
+    }
 
- @Override
- public int hashCode()
- {
-  long hashCode = 1;
-  LongListIterator i = listIterator();
+    @Override
+    public LongList subList(int fromIndex, int toIndex) {
+        return (this instanceof RandomAccess ? new LongRandomAccessSubList(this, fromIndex, toIndex)
+                : new LongSubList(this, fromIndex, toIndex));
+    }
 
-  while(i.hasNext())
-  {
-   long obj = i.next();
-   hashCode = 31 * hashCode + obj;
-  }
-  return (int)hashCode;
- }
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof LongList)) {
+            return false;
+        }
 
- @Override
- public boolean remove(long o)
- {
-  LongListIterator e = listIterator();
+        LongListIterator e1 = listIterator();
+        LongListIterator e2 = ((LongList) o).listIterator();
+        while (e1.hasNext() && e2.hasNext()) {
+            if (e1.next() != e2.next()) {
+                return false;
+            }
+        }
+        return !(e1.hasNext() || e2.hasNext());
+    }
 
-  while(e.hasNext())
-  {
-   if(o == e.next())
-   {
-    e.remove();
-    return true;
-   }
-  }
+    @Override
+    public int hashCode() {
+        long hashCode = 1;
+        LongListIterator i = listIterator();
 
-  return false;
- }
+        while (i.hasNext()) {
+            long obj = i.next();
+            hashCode = 31 * hashCode + obj;
+        }
+        return (int) hashCode;
+    }
 
- protected void removeRange(int fromIndex, int toIndex)
- {
-  LongListIterator it = listIterator(fromIndex);
-  for(int i = 0, n = toIndex - fromIndex; i < n; i++)
-  {
-   it.next();
-   it.remove();
-  }
- }
+    @Override
+    public boolean remove(long o) {
+        LongListIterator e = listIterator();
 
- protected transient int modCount = 0;
+        while (e.hasNext()) {
+            if (o == e.next()) {
+                e.remove();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected void removeRange(int fromIndex, int toIndex) {
+        LongListIterator it = listIterator(fromIndex);
+        for (int i = 0, n = toIndex - fromIndex; i < n; i++) {
+            it.next();
+            it.remove();
+        }
+    }
+
+    protected transient int modCount = 0;
 }
 
 class LongSubList extends AbstractLongList {
- private final AbstractLongList l;
- private final int offset;
- private int size;
- private int expectedModCount;
 
- LongSubList(AbstractLongList list, int fromIndex, int toIndex) {
-     if (fromIndex < 0)
-         throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
-     if (toIndex > list.size())
-         throw new IndexOutOfBoundsException("toIndex = " + toIndex);
-     if (fromIndex > toIndex)
-         throw new IllegalArgumentException("fromIndex(" + fromIndex +
-                                            ") > toIndex(" + toIndex + ")");
-     l = list;
-     offset = fromIndex;
-     size = toIndex - fromIndex;
-     expectedModCount = l.modCount;
- }
+    private final AbstractLongList l;
+    private final int offset;
+    private int size;
+    private int expectedModCount;
 
- @Override
- public long set(int index, long element) {
-     rangeCheck(index);
-     checkForComodification();
-     return l.set(index+offset, element);
- }
+    LongSubList(AbstractLongList list, int fromIndex, int toIndex) {
+        if (fromIndex < 0) {
+            throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
+        }
+        if (toIndex > list.size()) {
+            throw new IndexOutOfBoundsException("toIndex = " + toIndex);
+        }
+        if (fromIndex > toIndex) {
+            throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+        }
+        l = list;
+        offset = fromIndex;
+        size = toIndex - fromIndex;
+        expectedModCount = l.modCount;
+    }
 
- @Override
- public long get(int index) {
-     rangeCheck(index);
-     checkForComodification();
-     return l.get(index+offset);
- }
+    @Override
+    public long set(int index, long element) {
+        rangeCheck(index);
+        checkForComodification();
+        return l.set(index + offset, element);
+    }
 
- @Override
- public int size() {
-     checkForComodification();
-     return size;
- }
+    @Override
+    public long get(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        return l.get(index + offset);
+    }
 
- @Override
- public void add(int index, long element) {
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException();
-     checkForComodification();
-     l.add(index+offset, element);
-     expectedModCount = l.modCount;
-     size++;
-     modCount++;
- }
+    @Override
+    public int size() {
+        checkForComodification();
+        return size;
+    }
 
- @Override
- public long removeAt(int index) {
-     rangeCheck(index);
-     checkForComodification();
-     long result = l.removeAt(index+offset);
-     expectedModCount = l.modCount;
-     size--;
-     modCount++;
-     return result;
- }
+    @Override
+    public void add(int index, long element) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException();
+        }
+        checkForComodification();
+        l.add(index + offset, element);
+        expectedModCount = l.modCount;
+        size++;
+        modCount++;
+    }
 
- @Override
- protected void removeRange(int fromIndex, int toIndex) {
-     checkForComodification();
-     l.removeRange(fromIndex+offset, toIndex+offset);
-     expectedModCount = l.modCount;
-     size -= (toIndex-fromIndex);
-     modCount++;
- }
+    @Override
+    public long removeAt(int index) {
+        rangeCheck(index);
+        checkForComodification();
+        long result = l.removeAt(index + offset);
+        expectedModCount = l.modCount;
+        size--;
+        modCount++;
+        return result;
+    }
 
- public boolean addAll(Collection<Long> c) {
-     return addAll(size, c);
- }
+    @Override
+    protected void removeRange(int fromIndex, int toIndex) {
+        checkForComodification();
+        l.removeRange(fromIndex + offset, toIndex + offset);
+        expectedModCount = l.modCount;
+        size -= (toIndex - fromIndex);
+        modCount++;
+    }
 
- @Override
- public boolean addAll(int index, Collection<Long> c) {
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException(
-             "Index: "+index+", Size: "+size);
-     int cSize = c.size();
-     if (cSize==0)
-         return false;
+    public boolean addAll(Collection<Long> c) {
+        return addAll(size, c);
+    }
 
-     checkForComodification();
-     l.addAll(offset+index, c);
-     expectedModCount = l.modCount;
-     size += cSize;
-     modCount++;
-     return true;
- }
+    @Override
+    public boolean addAll(int index, Collection<Long> c) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        int cSize = c.size();
+        if (cSize == 0) {
+            return false;
+        }
 
- @Override
- public Iterator<Long> iterator() {
-  checkForComodification();
+        checkForComodification();
+        l.addAll(offset + index, c);
+        expectedModCount = l.modCount;
+        size += cSize;
+        modCount++;
+        return true;
+    }
 
-  return new Iterator<Long>() {
-      private final LongListIterator i = l.listIterator(offset);
+    @Override
+    public Iterator<Long> iterator() {
+        checkForComodification();
 
-      @Override
-      public boolean hasNext() {
-          return nextIndex() < size;
-      }
+        return new Iterator<Long>() {
+            private final LongListIterator i = l.listIterator(offset);
 
-      @Override
-      public Long next() {
-          if (hasNext())
-              return i.next();
-          else
-              throw new NoSuchElementException();
-      }
+            @Override
+            public boolean hasNext() {
+                return nextIndex() < size;
+            }
+
+            @Override
+            public Long next() {
+                if (hasNext()) {
+                    return i.next();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
 
-      public int nextIndex() {
-          return i.nextIndex() - offset;
-      }
+            public int nextIndex() {
+                return i.nextIndex() - offset;
+            }
 
-      @Override
-      public void remove() {
-          i.remove();
-          expectedModCount = l.modCount;
-          size--;
-          modCount++;
-      }
+            @Override
+            public void remove() {
+                i.remove();
+                expectedModCount = l.modCount;
+                size--;
+                modCount++;
+            }
 
-  };
- }
+        };
+    }
 
- @Override
- public LongListIterator listIterator(final int index) {
-     checkForComodification();
-     if (index<0 || index>size)
-         throw new IndexOutOfBoundsException(
-             "Index: "+index+", Size: "+size);
+    @Override
+    public LongListIterator listIterator(final int index) {
+        checkForComodification();
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
 
-     return new LongListIterator() {
-         private final LongListIterator i = l.listIterator(index+offset);
+        return new LongListIterator() {
+            private final LongListIterator i = l.listIterator(index + offset);
 
-         @Override
-         public boolean hasNext() {
-             return nextIndex() < size;
-         }
+            @Override
+            public boolean hasNext() {
+                return nextIndex() < size;
+            }
 
-         @Override
-         public long next() {
-             if (hasNext())
-                 return i.next();
-             else
-                 throw new NoSuchElementException();
-         }
+            @Override
+            public long next() {
+                if (hasNext()) {
+                    return i.next();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
-         @Override
-         public boolean hasPrevious() {
-             return previousIndex() >= 0;
-         }
+            @Override
+            public boolean hasPrevious() {
+                return previousIndex() >= 0;
+            }
 
-         @Override
-         public long previous() {
-             if (hasPrevious())
-                 return i.previous();
-             else
-                 throw new NoSuchElementException();
-         }
+            @Override
+            public long previous() {
+                if (hasPrevious()) {
+                    return i.previous();
+                } else {
+                    throw new NoSuchElementException();
+                }
+            }
 
-         @Override
-         public int nextIndex() {
-             return i.nextIndex() - offset;
-         }
+            @Override
+            public int nextIndex() {
+                return i.nextIndex() - offset;
+            }
 
-         @Override
-         public int previousIndex() {
-             return i.previousIndex() - offset;
-         }
+            @Override
+            public int previousIndex() {
+                return i.previousIndex() - offset;
+            }
 
-         @Override
-         public void remove() {
-             i.remove();
-             expectedModCount = l.modCount;
-             size--;
-             modCount++;
-         }
+            @Override
+            public void remove() {
+                i.remove();
+                expectedModCount = l.modCount;
+                size--;
+                modCount++;
+            }
 
-         @Override
-         public void set(long o) {
-             i.set(o);
-         }
+            @Override
+            public void set(long o) {
+                i.set(o);
+            }
 
-         @Override
-         public void add(long o) {
-             i.add(o);
-             expectedModCount = l.modCount;
-             size++;
-             modCount++;
-         }
-     };
- }
+            @Override
+            public void add(long o) {
+                i.add(o);
+                expectedModCount = l.modCount;
+                size++;
+                modCount++;
+            }
+        };
+    }
 
- @Override
- public LongList subList(int fromIndex, int toIndex) {
-     return new LongSubList(this, fromIndex, toIndex);
- }
+    @Override
+    public LongList subList(int fromIndex, int toIndex) {
+        return new LongSubList(this, fromIndex, toIndex);
+    }
 
- private void rangeCheck(int index) {
-     if (index<0 || index>=size)
-         throw new IndexOutOfBoundsException("Index: "+index+
-                                             ",Size: "+size);
- }
+    private void rangeCheck(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ",Size: " + size);
+        }
+    }
 
- private void checkForComodification() {
-     if (l.modCount != expectedModCount)
-         throw new ConcurrentModificationException();
- }
+    private void checkForComodification() {
+        if (l.modCount != expectedModCount) {
+            throw new ConcurrentModificationException();
+        }
+    }
 
- @Override
- public LongIterator longIterator()
- {
-  return listIterator();
- }
+    @Override
+    public LongIterator longIterator() {
+        return listIterator();
+    }
 }
 
 class LongRandomAccessSubList extends LongSubList implements RandomAccess {
- LongRandomAccessSubList(AbstractLongList list, int fromIndex, int toIndex) {
-     super(list, fromIndex, toIndex);
- }
 
- @Override
- public LongList subList(int fromIndex, int toIndex) {
-     return new LongRandomAccessSubList(this, fromIndex, toIndex);
- }
+    LongRandomAccessSubList(AbstractLongList list, int fromIndex, int toIndex) {
+        super(list, fromIndex, toIndex);
+    }
+
+    @Override
+    public LongList subList(int fromIndex, int toIndex) {
+        return new LongRandomAccessSubList(this, fromIndex, toIndex);
+    }
 }

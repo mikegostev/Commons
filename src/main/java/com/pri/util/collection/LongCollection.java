@@ -1,45 +1,44 @@
 package com.pri.util.collection;
 
-public interface LongCollection extends LongIterable, Iterable<Long>
-{
- // Query Operations
+public interface LongCollection extends LongIterable, Iterable<Long> {
+    // Query Operations
 
- int size();
+    int size();
 
- boolean isEmpty();
+    boolean isEmpty();
 
- boolean contains(long o);
+    boolean contains(long o);
 
- @Override
- LongIterator longIterator();
+    @Override
+    LongIterator longIterator();
 
- long[] toArray();
+    long[] toArray();
 
- long[] toArray(long[] a);
+    long[] toArray(long[] a);
 
- // Modification Operations
+    // Modification Operations
 
- boolean add(long e);
+    boolean add(long e);
 
- boolean remove(long o);
+    boolean remove(long o);
 
- // Bulk Operations
+    // Bulk Operations
 
- boolean containsAll(LongCollection c);
+    boolean containsAll(LongCollection c);
 
- boolean addAll(LongCollection c);
+    boolean addAll(LongCollection c);
 
- boolean removeAll(LongCollection c);
+    boolean removeAll(LongCollection c);
 
- boolean retainAll(LongCollection c);
+    boolean retainAll(LongCollection c);
 
- void clear();
+    void clear();
 
- // Comparison and hashing
+    // Comparison and hashing
 
- @Override
- boolean equals(Object o);
+    @Override
+    boolean equals(Object o);
 
- @Override
- int hashCode();
+    @Override
+    int hashCode();
 }

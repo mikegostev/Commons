@@ -1,6 +1,6 @@
 package com.pri.util;
 
-public interface Changeable
-{
- boolean isChanged();
+public interface Changeable {
+
+    boolean isChanged();
 }

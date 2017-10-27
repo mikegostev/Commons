@@ -1,17 +1,15 @@
 package uk.ac.ebi.mg.rwarbiter;
 
-public class Token
-{
- private boolean active=true;
+public class Token {
 
- public boolean isActive()
- {
-  return active;
- }
+    private boolean active = true;
 
- void setActive(boolean active)
- {
-  this.active = active;
- }
- 
+    public boolean isActive() {
+        return active;
+    }
+
+    void setActive(boolean active) {
+        this.active = active;
+    }
+
 }

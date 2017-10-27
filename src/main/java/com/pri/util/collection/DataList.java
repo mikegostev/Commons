@@ -3,11 +3,11 @@
  */
 package com.pri.util.collection;
 
+import com.pri.util.ListDataModel;
 import java.util.List;
 
-import com.pri.util.ListDataModel;
+public interface DataList<T> extends List<T>, ListDataModel<T> {
 
-public interface DataList<T> extends List<T>, ListDataModel<T>{
-	public T getByID (int id) ;
+    public T getByID(int id);
 
 }

@@ -1,6 +1,5 @@
 package uk.ac.ebi.mg.reflectcall.exception;
 
-public class MethodNotExistException extends Exception
-{
+public class MethodNotExistException extends Exception {
 
 }

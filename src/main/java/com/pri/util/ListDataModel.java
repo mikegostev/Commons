@@ -3,12 +3,12 @@
  */
 package com.pri.util;
 
+import com.pri.util.collection.ListListener;
 import javax.swing.ListModel;
 
-import com.pri.util.collection.ListListener;
+public interface ListDataModel<T> extends ListModel {
 
-public interface ListDataModel<T> extends ListModel{
+    public void addListListener(ListListener<T> listener);
 
-	public void addListListener (ListListener<T> listener) ;
-	public void removeListListener (ListListener<T> listener) ;
+    public void removeListListener(ListListener<T> listener);
 }

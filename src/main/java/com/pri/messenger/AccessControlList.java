@@ -14,58 +14,46 @@ import java.util.TreeMap;
 /**
  * @author Mike
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class AccessControlList implements AccessController
-{
- private Map<Address,Address> addrs;
- /**
-  * 
-  */
- public AccessControlList()
- {
-  addrs=new TreeMap<Address,Address>();
- }
+public class AccessControlList implements AccessController {
 
- public AccessControlList( List<Address> addrList )
- {
-  addrs=new TreeMap<Address,Address>();
-  
-  for(Address a : addrList)
-   addAddress( a );
- }
+    private Map<Address, Address> addrs;
 
- public void addAddress( Address addr )
- {
-  addrs.put(addr,addr);
- }
- 
- /* (non-Javadoc)
-  * @see com.pri.messenger.AccessController#checkAddress(com.pri.messenger.Address)
-  */
- public boolean checkAddress(Address addr)
- {
-/*  
-  String lcl;
+    /**
+     *
+     */
+    public AccessControlList() {
+        addrs = new TreeMap<Address, Address>();
+    }
 
-  System.out.println("Checking access to: "+addr);
-  
-  Iterator iter = addrs.keySet().iterator();
-  while( iter.hasNext() )
-   System.out.println("ACL: "+iter.next());
-*/
-  
-  if( addrs.containsKey(addr) )
-   return true;
-  
- 
-  return false;
- }
+    public AccessControlList(List<Address> addrList) {
+        addrs = new TreeMap<Address, Address>();
 
- public boolean checkAddress(String local)
- {
-  return addrs.containsKey(local);
- }
+        for (Address a : addrList) {
+            addAddress(a);
+        }
+    }
+
+    public void addAddress(Address addr) {
+        addrs.put(addr, addr);
+    }
+
+    /* (non-Javadoc)
+     * @see com.pri.messenger.AccessController#checkAddress(com.pri.messenger.Address)
+     */
+    public boolean checkAddress(Address addr) {
+
+        if (addrs.containsKey(addr)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean checkAddress(String local) {
+        return addrs.containsKey(local);
+    }
 
 }

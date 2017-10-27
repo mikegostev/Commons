@@ -1,8 +1,7 @@
 package com.pri.session;
 
-public interface RequestData
-{
+public interface RequestData {
 
- public String getAddr();
+    public String getAddr();
 
 }

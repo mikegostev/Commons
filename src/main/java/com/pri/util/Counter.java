@@ -10,78 +10,69 @@ package com.pri.util;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class Counter extends Number
-{
- private static final long serialVersionUID = 698465133888087160L;
+public class Counter extends Number {
 
- private int count;
- /**
-  * 
-  */
- public Counter()
- {
-  count  = 0;
- }
+    private static final long serialVersionUID = 698465133888087160L;
 
- public Counter( int init )
- {
-  count  = init;
- }
+    private int count;
 
- public int inc()
- {
-  return ++count;
- }
+    /**
+     *
+     */
+    public Counter() {
+        count = 0;
+    }
 
- public int add( int v )
- {
-  return count+=v;
- }
+    public Counter(int init) {
+        count = init;
+    }
 
- 
- public int dec()
- {
-  return --count;
- }
- 
- public int intValue()
- {
-  return count; 
- }
- 
- public String toString()
- {
-  return String.valueOf(count); 
- }
+    public int inc() {
+        return ++count;
+    }
 
- /* (non-Javadoc)
-  * @see java.lang.Number#doubleValue()
-  */
- public double doubleValue()
- {
-  // TODO Auto-generated method stub
-  return count;
- }
+    public int add(int v) {
+        return count += v;
+    }
 
- /* (non-Javadoc)
-  * @see java.lang.Number#floatValue()
-  */
- public float floatValue()
- {
-  // TODO Auto-generated method stub
-  return count;
- }
 
- /* (non-Javadoc)
-  * @see java.lang.Number#longValue()
-  */
- public long longValue()
- {
-  // TODO Auto-generated method stub
-  return count;
- }
+    public int dec() {
+        return --count;
+    }
+
+    public int intValue() {
+        return count;
+    }
+
+    public String toString() {
+        return String.valueOf(count);
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Number#doubleValue()
+     */
+    public double doubleValue() {
+        // TODO Auto-generated method stub
+        return count;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Number#floatValue()
+     */
+    public float floatValue() {
+        // TODO Auto-generated method stub
+        return count;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Number#longValue()
+     */
+    public long longValue() {
+        // TODO Auto-generated method stub
+        return count;
+    }
 
 }

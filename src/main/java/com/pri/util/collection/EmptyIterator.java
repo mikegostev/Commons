@@ -14,79 +14,69 @@ import java.util.NoSuchElementException;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class EmptyIterator<T> implements ListIterator<T>, Serializable
-{
- private static final long serialVersionUID = 020110716L;
+public class EmptyIterator<T> implements ListIterator<T>, Serializable {
 
- private static EmptyIterator<Object> instance = new EmptyIterator<Object>();
+    private static final long serialVersionUID = 020110716L;
 
- private EmptyIterator()
- {}
- 
- @SuppressWarnings("unchecked")
- public static <T> EmptyIterator<T> getInstance()
- {
-  return (EmptyIterator<T>)instance; 
- }
- 
- public void remove()
- {
-  throw new UnsupportedOperationException();
- }
+    private static EmptyIterator<Object> instance = new EmptyIterator<Object>();
 
- /* (non-Javadoc)
-  * @see java.util.Iterator#hasNext()
-  */
- public boolean hasNext()
- {
-  return false;
- }
+    private EmptyIterator() {
+    }
 
- /* (non-Javadoc)
-  * @see java.util.Iterator#next()
-  */
- public T next()
- {
-  throw new NoSuchElementException();
- }
+    @SuppressWarnings("unchecked")
+    public static <T> EmptyIterator<T> getInstance() {
+        return (EmptyIterator<T>) instance;
+    }
 
- @Override
- public boolean hasPrevious()
- {
-  return false;
- }
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
 
- @Override
- public T previous()
- {
-  throw new NoSuchElementException();
- }
+    /* (non-Javadoc)
+     * @see java.util.Iterator#hasNext()
+     */
+    public boolean hasNext() {
+        return false;
+    }
 
- @Override
- public int nextIndex()
- {
-  return 0;
- }
+    /* (non-Javadoc)
+     * @see java.util.Iterator#next()
+     */
+    public T next() {
+        throw new NoSuchElementException();
+    }
 
- @Override
- public int previousIndex()
- {
-  return -1;
- }
+    @Override
+    public boolean hasPrevious() {
+        return false;
+    }
 
- @Override
- public void set(T e)
- {
-  throw new UnsupportedOperationException();
- }
+    @Override
+    public T previous() {
+        throw new NoSuchElementException();
+    }
 
- @Override
- public void add(T e)
- {
-  throw new UnsupportedOperationException();
- }
+    @Override
+    public int nextIndex() {
+        return 0;
+    }
+
+    @Override
+    public int previousIndex() {
+        return -1;
+    }
+
+    @Override
+    public void set(T e) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void add(T e) {
+        throw new UnsupportedOperationException();
+    }
 
 }

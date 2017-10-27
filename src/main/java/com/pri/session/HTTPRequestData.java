@@ -12,24 +12,22 @@ import javax.servlet.ServletRequest;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public class HTTPRequestData implements com.pri.session.RequestData
-{
- private String addr;
+public class HTTPRequestData implements com.pri.session.RequestData {
 
- public HTTPRequestData( ServletRequest rq )
- {
-  addr=rq.getRemoteAddr();
- }
+    private String addr;
 
- /**
-  * @return Returns the addr.
-  */
- public String getAddr()
- {
-  return addr;
- }
+    public HTTPRequestData(ServletRequest rq) {
+        addr = rq.getRemoteAddr();
+    }
+
+    /**
+     * @return Returns the addr.
+     */
+    public String getAddr() {
+        return addr;
+    }
 
 }

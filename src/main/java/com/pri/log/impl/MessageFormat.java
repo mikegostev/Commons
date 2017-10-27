@@ -1,5 +1,6 @@
 package com.pri.log.impl;
 
+import com.pri.log.LogRecord;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,308 +8,279 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.pri.log.LogRecord;
+public class MessageFormat {
 
-public class MessageFormat
-{
- static long                apStartTime = System.currentTimeMillis();
- private ArrayList<LRField> fm;
- static Pattern             pat         = Pattern.compile("%d\\{([^}]+)\\}|%[cdPCDFLmMnprt%]|%s\\{([0-9]+)\\}");
- static Pattern             paramPat    = Pattern.compile("\\{([0-9])\\}");
+    static long apStartTime = System.currentTimeMillis();
+    private ArrayList<LRField> fm;
+    static Pattern pat = Pattern.compile("%d\\{([^}]+)\\}|%[cdPCDFLmMnprt%]|%s\\{([0-9]+)\\}");
+    static Pattern paramPat = Pattern.compile("\\{([0-9])\\}");
 
 
- public MessageFormat(String fmtStr, String defaultDateFormat)
- {
-  setFormat(fmtStr, defaultDateFormat);
- }
+    public MessageFormat(String fmtStr, String defaultDateFormat) {
+        setFormat(fmtStr, defaultDateFormat);
+    }
 
- public void setFormat(String fmtStr, String defaultDateFormat)
- {
-  fm = new ArrayList<LRField>();
-  Matcher m = pat.matcher(fmtStr);
+    public void setFormat(String fmtStr, String defaultDateFormat) {
+        fm = new ArrayList<LRField>();
+        Matcher m = pat.matcher(fmtStr);
 
-  int lastPos = 0;
-  while(m.find())
-  {
-   if(lastPos < m.start())
-    fm.add(new StaticText(fmtStr.substring(lastPos, m.start())));
+        int lastPos = 0;
+        while (m.find()) {
+            if (lastPos < m.start()) {
+                fm.add(new StaticText(fmtStr.substring(lastPos, m.start())));
+            }
 
-   char ch = fmtStr.charAt(m.start() + 1);
+            char ch = fmtStr.charAt(m.start() + 1);
 
-   switch(ch)
-   {
-   case 't':
-    fm.add(new LRField()
-    {
-     @SuppressWarnings("unused")
-     public void appendValue(StringBuffer sb,  LogRecord lr)
-     {
-      sb.append(Thread.currentThread().getName());
-     }
-    });
-    break;
-   case 'r':
-    fm.add(new LRField()
-    {
-     @SuppressWarnings("unused")
-     public void appendValue(StringBuffer sb, LogRecord lr)
-     {
-      sb.append(System.currentTimeMillis() - apStartTime);
-     }
-    });
-    break;
-   case 'p':
-    fm.add(new LFLevel());
-    break;
-   case '%':
-    fm.add(new StaticText("%"));
-    break;
-   case 'n':
-    fm.add(new StaticText("\n"));
-    break;
-   case 'M':
-    fm.add(new LFMethod());
-    break;
-   case 'm':
-    fm.add(new LFMessage());
-    break;
-   case 'L':
-    fm.add(new LFLine());
-    break;
-   case 'F':
-    fm.add(new LFFile());
-    break;
-   case 'D':
-    fm.add(new LFLocalDate());
-    break;
-   case 'd':
-    if(m.group(1) == null)
-     try
-     {
-      fm.add(new LFDateFormatted(defaultDateFormat));
-     }
-     catch( Throwable t )
-     {
-      fm.add(new LFLocalDate());
-     }
-    else
-     try
-     {
-      fm.add(new LFDateFormatted(m.group(1)));
-     }
-     catch( Throwable t )
-     {
-      fm.add(new LFLocalDate());
-     }
-    break;
-   case 'c':
-    fm.add(new LFLoggerName());
-    break;
-   case 'C':
-    fm.add(new LFClassName());
-    break;
-   case 'P':
-    fm.add(new LFFullClassName());
-    break;
-   case 's':
-    fm.add(new Shift( Integer.parseInt(m.group(2))));
-    break;
+            switch (ch) {
+                case 't':
+                    fm.add(new LRField() {
+                        @SuppressWarnings("unused")
+                        public void appendValue(StringBuffer sb, LogRecord lr) {
+                            sb.append(Thread.currentThread().getName());
+                        }
+                    });
+                    break;
+                case 'r':
+                    fm.add(new LRField() {
+                        @SuppressWarnings("unused")
+                        public void appendValue(StringBuffer sb, LogRecord lr) {
+                            sb.append(System.currentTimeMillis() - apStartTime);
+                        }
+                    });
+                    break;
+                case 'p':
+                    fm.add(new LFLevel());
+                    break;
+                case '%':
+                    fm.add(new StaticText("%"));
+                    break;
+                case 'n':
+                    fm.add(new StaticText("\n"));
+                    break;
+                case 'M':
+                    fm.add(new LFMethod());
+                    break;
+                case 'm':
+                    fm.add(new LFMessage());
+                    break;
+                case 'L':
+                    fm.add(new LFLine());
+                    break;
+                case 'F':
+                    fm.add(new LFFile());
+                    break;
+                case 'D':
+                    fm.add(new LFLocalDate());
+                    break;
+                case 'd':
+                    if (m.group(1) == null) {
+                        try {
+                            fm.add(new LFDateFormatted(defaultDateFormat));
+                        } catch (Throwable t) {
+                            fm.add(new LFLocalDate());
+                        }
+                    } else {
+                        try {
+                            fm.add(new LFDateFormatted(m.group(1)));
+                        } catch (Throwable t) {
+                            fm.add(new LFLocalDate());
+                        }
+                    }
+                    break;
+                case 'c':
+                    fm.add(new LFLoggerName());
+                    break;
+                case 'C':
+                    fm.add(new LFClassName());
+                    break;
+                case 'P':
+                    fm.add(new LFFullClassName());
+                    break;
+                case 's':
+                    fm.add(new Shift(Integer.parseInt(m.group(2))));
+                    break;
 
-   }
+            }
 
-   lastPos = m.end();
-  }
+            lastPos = m.end();
+        }
 
-  if(lastPos < fmtStr.length())
-   fm.add(new StaticText(fmtStr.substring(lastPos)));
- }
+        if (lastPos < fmtStr.length()) {
+            fm.add(new StaticText(fmtStr.substring(lastPos)));
+        }
+    }
 
- public void format(StringBuffer sb, LogRecord lr)
- {
-  int n = fm.size();
-  for(int i = 0; i < n; i++)
-   fm.get(i).appendValue(sb, lr);
- 
-  if( lr.getThrown() != null )
-  {
-   sb.append('\n');
-   reportThrowable( sb, lr.getThrown() );
-  }
- }
+    public void format(StringBuffer sb, LogRecord lr) {
+        int n = fm.size();
+        for (int i = 0; i < n; i++) {
+            fm.get(i).appendValue(sb, lr);
+        }
 
- static public void substituteParams(StringBuffer sb, String message, Object[] param)
- {
-  Matcher m = paramPat.matcher(message);
+        if (lr.getThrown() != null) {
+            sb.append('\n');
+            reportThrowable(sb, lr.getThrown());
+        }
+    }
 
-  while(m.find())
-  {
-   int ref = Integer.parseInt(m.group(1));
+    static public void substituteParams(StringBuffer sb, String message, Object[] param) {
+        Matcher m = paramPat.matcher(message);
 
-   if(param != null && ref >= 0 && ref < param.length)
-    m.appendReplacement(sb, param[ref].toString());
-   else
-    m.appendReplacement(sb, "");
-  }
-  m.appendTail(sb);
+        while (m.find()) {
+            int ref = Integer.parseInt(m.group(1));
 
- }
- 
- static public void reportThrowable(StringBuffer sb, Throwable th)
- {
-  StackTraceElement[] tl = th.getStackTrace();
+            if (param != null && ref >= 0 && ref < param.length) {
+                m.appendReplacement(sb, param[ref].toString());
+            } else {
+                m.appendReplacement(sb, "");
+            }
+        }
+        m.appendTail(sb);
 
-  String msg = th.getMessage();
-  
-  msg = msg==null?"":msg;
-  
-  sb.append("Exception: ").append(th.getClass().getName()).append(": \"").append(msg).append("\"");
+    }
 
-  int i;
-  for(i = 0; i < tl.length; i++)
-   sb.append("\n\tat ").append(tl[i].toString());
+    static public void reportThrowable(StringBuffer sb, Throwable th) {
+        StackTraceElement[] tl = th.getStackTrace();
 
-  if(th.getCause() != null)
-  {
-   sb.append("\n Caused By ");
-   reportThrowable(sb,th.getCause());
-  }
- }
+        String msg = th.getMessage();
 
- interface LRField
- {
-  void appendValue(StringBuffer sb, LogRecord lr);
- }
+        msg = msg == null ? "" : msg;
 
- static class LFLoggerName implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getLoggerName());
-  }
- }
+        sb.append("Exception: ").append(th.getClass().getName()).append(": \"").append(msg).append("\"");
 
- static class LFClassName implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   String cn = lr.getClassName();
-   int ind = cn.lastIndexOf('.');
+        int i;
+        for (i = 0; i < tl.length; i++) {
+            sb.append("\n\tat ").append(tl[i].toString());
+        }
 
-   if(ind == -1)
-    sb.append(cn);
+        if (th.getCause() != null) {
+            sb.append("\n Caused By ");
+            reportThrowable(sb, th.getCause());
+        }
+    }
 
-   sb.append(cn.substring(ind + 1));
-  }
- }
+    interface LRField {
 
- static class LFFullClassName implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getClassName());
-  }
- }
+        void appendValue(StringBuffer sb, LogRecord lr);
+    }
 
- static class LFMethod implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getMethod());
-  }
- }
+    static class LFLoggerName implements LRField {
 
- static class LFMessage implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   substituteParams(sb,lr.getMessage(),lr.getParams());
-  }
- }
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getLoggerName());
+        }
+    }
 
- static class LFLevel implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getLevel().toString());
-  }
- }
+    static class LFClassName implements LRField {
 
- static class LFLine implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getFileLine());
-  }
- }
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            String cn = lr.getClassName();
+            int ind = cn.lastIndexOf('.');
 
- static class LFFile implements LRField
- {
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(lr.getFileName());
-  }
- }
+            if (ind == -1) {
+                sb.append(cn);
+            }
 
- static class LFLocalDate implements LRField
- {
-  @SuppressWarnings("unused")
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+            sb.append(cn.substring(ind + 1));
+        }
+    }
 
-   sb.append(df.format(new Date()));
-  }
- }
+    static class LFFullClassName implements LRField {
 
- static class LFDateFormatted implements LRField
- {
-  DateFormat df;
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getClassName());
+        }
+    }
 
-  LFDateFormatted(String fmt)
-  {
-   df = new SimpleDateFormat(fmt);
-  }
-  
-  @SuppressWarnings("unused")
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(df.format(new Date()));
-  }
- }
+    static class LFMethod implements LRField {
 
- static class StaticText implements LRField
- {
-  String v;
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getMethod());
+        }
+    }
 
-  StaticText(String s)
-  {
-   v = s;
-  }
-  
-  @SuppressWarnings("unused")
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   sb.append(v);
-  }
- }
+    static class LFMessage implements LRField {
 
- static class Shift implements LRField
- {
-  int pos;
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            substituteParams(sb, lr.getMessage(), lr.getParams());
+        }
+    }
 
-  Shift( int p )
-  {
-   pos=p;
-  }
+    static class LFLevel implements LRField {
 
-  @SuppressWarnings("unused")
-  public void appendValue(StringBuffer sb, LogRecord lr)
-  {
-   int n = pos - sb.length();
-   for( n--; n > 0; n-- )
-    sb.append(' ');
-  }
- }
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getLevel().toString());
+        }
+    }
+
+    static class LFLine implements LRField {
+
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getFileLine());
+        }
+    }
+
+    static class LFFile implements LRField {
+
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(lr.getFileName());
+        }
+    }
+
+    static class LFLocalDate implements LRField {
+
+        @SuppressWarnings("unused")
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            DateFormat df = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
+
+            sb.append(df.format(new Date()));
+        }
+    }
+
+    static class LFDateFormatted implements LRField {
+
+        DateFormat df;
+
+        LFDateFormatted(String fmt) {
+            df = new SimpleDateFormat(fmt);
+        }
+
+        @SuppressWarnings("unused")
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(df.format(new Date()));
+        }
+    }
+
+    static class StaticText implements LRField {
+
+        String v;
+
+        StaticText(String s) {
+            v = s;
+        }
+
+        @SuppressWarnings("unused")
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            sb.append(v);
+        }
+    }
+
+    static class Shift implements LRField {
+
+        int pos;
+
+        Shift(int p) {
+            pos = p;
+        }
+
+        @SuppressWarnings("unused")
+        public void appendValue(StringBuffer sb, LogRecord lr) {
+            int n = pos - sb.length();
+            for (n--; n > 0; n--) {
+                sb.append(' ');
+            }
+        }
+    }
 
 }
 

@@ -7,17 +7,14 @@
 package com.pri.messenger;
 
 
+public class NetworkException extends MessageDeliveryException {
 
-public class NetworkException extends MessageDeliveryException
-{
- public NetworkException(String msg)
- {
-  super(msg);
- }
+    public NetworkException(String msg) {
+        super(msg);
+    }
 
- public NetworkException(Throwable t)
- {
-  super(t);
- }
+    public NetworkException(Throwable t) {
+        super(t);
+    }
 
 }

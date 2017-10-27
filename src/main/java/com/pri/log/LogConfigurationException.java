@@ -12,15 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 
 package com.pri.log;
 
 
 /**
- * <p>An exception that is thrown only if a suitable <code>LogFactory</code>
- * or <code>Log</code> instance cannot be created by the corresponding
- * factory methods.</p>
+ * <p>An exception that is thrown only if a suitable <code>LogFactory</code> or <code>Log</code> instance cannot be
+ * created by the corresponding factory methods.</p>
  *
  * @author Craig R. McClanahan
  * @version $Revision: 1.1 $ $Date: 2007/08/06 23:41:03 $
@@ -52,8 +51,7 @@ public class LogConfigurationException extends RuntimeException {
 
 
     /**
-     * Construct a new exception with the specified cause and a derived
-     * detail message.
+     * Construct a new exception with the specified cause and a derived detail message.
      *
      * @param cause The underlying cause
      */

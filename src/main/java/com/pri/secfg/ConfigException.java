@@ -1,11 +1,9 @@
 package com.pri.secfg;
 
-public class ConfigException extends Exception
-{
+public class ConfigException extends Exception {
 
- public ConfigException(String msg)
- {
-  super(msg);
- }
+    public ConfigException(String msg) {
+        super(msg);
+    }
 
 }

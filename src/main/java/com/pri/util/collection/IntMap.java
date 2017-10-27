@@ -5,51 +5,51 @@ import java.util.Map;
 import java.util.Set;
 
 
-public interface IntMap<V>
-{
- int size();
+public interface IntMap<V> {
 
- boolean isEmpty();
+    int size();
 
- boolean containsKey(int key);
+    boolean isEmpty();
 
- boolean containsValue(Object value);
+    boolean containsKey(int key);
 
- V get(int key);
+    boolean containsValue(Object value);
 
- V put(int key, V value);
+    V get(int key);
 
- V remove(int key);
+    V put(int key, V value);
 
- void putAll(Map<Integer, ? extends V> t);
+    V remove(int key);
 
- void putAll(IntMap< ? extends V> t);
+    void putAll(Map<Integer, ? extends V> t);
 
- void clear();
+    void putAll(IntMap<? extends V> t);
 
- Set<Integer> keySet();
- 
- IntIterator keyIterator();
+    void clear();
 
- Collection<V> values();
+    Set<Integer> keySet();
 
- Set<IntMap.Entry<V>> entrySet();
+    IntIterator keyIterator();
 
- boolean equals(Object o);
+    Collection<V> values();
 
- int hashCode();
+    Set<IntMap.Entry<V>> entrySet();
 
- interface Entry<VL>
- {
-  int getKey();
+    boolean equals(Object o);
 
-  VL getValue();
+    int hashCode();
 
-  VL setValue(VL value);
+    interface Entry<VL> {
 
-  boolean equals(Object o);
+        int getKey();
 
-  int hashCode();
- }
+        VL getValue();
+
+        VL setValue(VL value);
+
+        boolean equals(Object o);
+
+        int hashCode();
+    }
 
 }

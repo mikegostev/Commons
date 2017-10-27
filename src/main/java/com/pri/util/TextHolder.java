@@ -10,11 +10,12 @@ package com.pri.util;
 /**
  * @author mg
  *
- * To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Generation - Code and Comments
+ * To change the template for this generated type comment go to Window - Preferences - Java - Code Generation - Code and
+ * Comments
  */
-public interface TextHolder
-{
- public void setText( String t );
- public String getText();
+public interface TextHolder {
+
+    public void setText(String t);
+
+    public String getText();
 }
